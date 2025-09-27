@@ -24,6 +24,7 @@ function Navbar() {
     );
 }
 
+
 function Hero() {
     return (
         <section className="bg-gradient-to-r from-blue-500 to-indigo-700 text-white text-center py-24 px-6">
