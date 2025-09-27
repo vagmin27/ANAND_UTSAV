@@ -1,4 +1,4 @@
-import './App.css'
+import './css/App.css'
 import HomePage from './pages/home'
 import FestiveAuth from './pages/FestiveAuth';
 import { Routes, Route } from "react-router-dom"
