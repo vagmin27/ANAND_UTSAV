@@ -1,22 +1,46 @@
-function Navbar() {
+import React, { useState, useEffect } from 'react';
+import { User, ShoppingCart, Menu, Search, Heart } from 'lucide-react';
+import "../css/Navbar.css";
+
+// --- Main Navbar Component ---
+export default function AnandUtsavNavbar() {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    // Effect to detect page scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            // Set state to true if user scrolls down 10px, otherwise false
+            setIsScrolled(window.scrollY > 0);
+        };
+
+        // Add event listener when the component mounts
+        window.addEventListener('scroll', handleScroll);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []); // Empty dependency array means this effect runs only once on mount
+
     return (
-        <nav className="flex justify-between items-center px-6 py-4 shadow-md bg-white sticky top-0 z-50">
-            <div className="flex items-center gap-4">
-                <Menu className="w-6 h-6 cursor-pointer md:hidden" />
-                <h1 className="text-2xl font-bold text-blue-600">ShopEase</h1>
+        <header className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+            <div className="navbar-left">
+                <Menu className="menu-icon" />
+                {/* Logo updated to the new brand name */}
+                <h1 className="logo">AnandUtsav</h1>
             </div>
-            <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-4 py-2 flex-1 mx-6">
-                <Search className="w-5 h-5 text-gray-500" />
-                <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="bg-transparent px-2 outline-none flex-1"
-                />
+
+            <div className="search-bar">
+                <Search size={20} className="search-icon" />
+                {/* Placeholder text updated to be more thematic */}
+                <input type="text" placeholder="Search for festive wear, gifts & more..." />
             </div>
-            <div className="flex items-center gap-6">
-                <User className="w-6 h-6 cursor-pointer" />
-                <ShoppingCart className="w-6 h-6 cursor-pointer" />
+
+            <div className="navbar-right">
+                <Heart className="icon" />
+                <ShoppingCart className="icon" />
+                <User className="icon" />
             </div>
-        </nav>
+        </header>
     );
 }

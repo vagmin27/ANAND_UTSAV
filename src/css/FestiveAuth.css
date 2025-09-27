@@ -1,0 +1,173 @@
+/* --- Auth Page Root with Festive Background --- */
+.auth-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    background: url("/public/images/festival.png") no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* Dark overlay to make the card stand out */
+.auth-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+/* --- Core Liquid Glass Card --- */
+.auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    padding: 2.5rem;
+    color: #fff;
+}
+
+/* --- Consistent Thematic Tabs --- */
+.auth-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 2rem;
+    padding: 0.3rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.7rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    background: #fff;
+    color: #1F2937;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Content Styling --- */
+.auth-content {
+    text-align: center;
+}
+
+.auth-title {
+    font-family: 'Tiro Devanagari Hindi', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: height 0.5s ease-in-out;
+    /* Smooth resize for the form */
+}
+
+/* Glassy Input Fields */
+.auth-input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 103, 31, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.4);
+}
+
+/* --- Thematic Button & Links --- */
+.submit-btn {
+    background: #FF671F;
+    color: #fff;
+    border: none;
+    padding: 0.9rem;
+    margin-top: 1rem;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 103, 31, 0.4);
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 103, 31, 0.6);
+}
+
+.switch-prompt {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.switch-link {
+    font-weight: 600;
+    color: #FFD700;
+    text-decoration: none;
+    margin-left: 0.5rem;
+}
+
+.switch-link:hover {
+    text-decoration: underline;
+}
+
+/* --- ✨ NEW: Animation for Confirm Password Field --- */
+.confirm-password-wrapper {
+    /* Uses a modern grid technique for smooth height animation */
+    display: grid;
+    grid-template-rows: 0fr;
+    /* Collapsed by default */
+    opacity: 0;
+    transition: grid-template-rows 0.5s ease-in-out, opacity 0.3s ease-in-out 0.2s;
+}
+
+.confirm-password-wrapper.active {
+    grid-template-rows: 1fr;
+    /* Expanded when active */
+    opacity: 1;
+}
+
+.input-field-inner {
+    overflow: hidden;
+    /* Essential for the grid animation to work correctly */
+}
