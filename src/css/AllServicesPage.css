@@ -1,0 +1,477 @@
+/* --- 1. Main Page Layout --- */
+.services-page-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+    background: #f8f9fa;
+}
+
+/* --- 2. Sticky Filters Sidebar --- */
+.filters-sidebar {
+    flex: 0 0 300px;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 120px;
+    /* Adjust based on your navbar height */
+}
+
+.filters-sidebar h3 {
+    font-size: 1.5rem;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* --- 3. Main Content & Enhanced Header --- */
+.main-content {
+    flex: 1;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.page-header h1 {
+    font-family: 'Tiro Devanagari Hindi', serif;
+    font-size: 2.8rem;
+    margin: 0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+}
+
+.search-bar .search-icon {
+    color: #94a3b8;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    background: transparent;
+    margin-left: 0.5rem;
+}
+
+/* --- 4. Sidebar Filter Styling --- */
+.filter-group {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem 0;
+}
+
+.filter-group summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.filter-group summary::-webkit-details-marker {
+    display: none;
+}
+
+.filter-group summary svg {
+    transition: transform 0.2s ease;
+}
+
+.filter-group[open]>summary svg {
+    transform: rotate(180deg);
+}
+
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.custom-select-wrapper select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.custom-select-wrapper .select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #94a3b8;
+}
+
+.price-slider-container {
+    padding-top: 0.5rem;
+}
+
+.price-value {
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.price-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.price-slider:hover {
+    opacity: 1;
+}
+
+.price-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #FF671F;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.price-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #FF671F;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.rating-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+}
+
+.rating-pill {
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rating-pill:hover {
+    border-color: #FF671F;
+}
+
+.rating-pill.active {
+    background: #FF671F;
+    color: #fff;
+    border-color: #FF671F;
+}
+
+.clear-filters-btn {
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: #FF671F;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+
+/* --- 5. Custom Sort Dropdown Styling --- */
+/* --- 5. Custom Sort Dropdown Styling (Improved) --- */
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    /* Slightly more rounded */
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dropdown-toggle:hover {
+    border-color: #FF671F;
+    box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.1);
+    /* Saffron glow on hover */
+}
+
+/* ✨ NEW: Style for when the dropdown is open */
+.dropdown-toggle.active {
+    border-color: #FF671F;
+    box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.1);
+}
+
+.dropdown-toggle strong {
+    color: #1a202c;
+}
+
+.dropdown-toggle .chevron-icon {
+    color: #64748b;
+    transition: transform 0.2s ease-in-out;
+}
+
+.dropdown-toggle .chevron-icon.open {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 10;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    /* ✨ IMPROVED: Softer, more defined shadow */
+    box-shadow: 0 15px 35px rgba(30, 40, 50, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    padding: 0.5rem;
+    list-style: none;
+    margin: 0;
+    width: 220px;
+    /* ✨ IMPROVED: New animation */
+    animation: scale-in 0.2s ease-out;
+    transform-origin: top right;
+}
+
+.dropdown-menu li {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f8f9fa;
+}
+
+/* ✨ NEW: Adds a checkmark icon to the active option */
+.dropdown-menu li.active {
+    color: #FF671F;
+    font-weight: 600;
+}
+
+.dropdown-menu li.active::before {
+    content: '✓';
+    font-weight: 700;
+    margin-right: 0.75rem;
+}
+
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --- 6. View Toggle --- */
+.view-toggle button {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    line-height: 0;
+}
+
+.view-toggle button.active {
+    background: #FF671F;
+    color: #fff;
+    border-color: #FF671F;
+}
+
+/* --- 7. Card Styling (Unified) --- */
+.service-item-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.service-item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    border-color: #FF671F;
+}
+
+.item-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.item-image-container img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.service-item-card:hover .item-image-container img {
+    transform: scale(1.05);
+}
+
+.item-wishlist-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #475569;
+    transition: all 0.3s ease;
+}
+
+.item-wishlist-btn:hover {
+    background: #EC1D67;
+    color: #fff;
+}
+
+.item-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-category {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #FF671F;
+    text-transform: uppercase;
+}
+
+.item-name {
+    font-size: 1.3rem;
+    margin: 0.25rem 0 0.75rem 0;
+}
+
+.item-description {
+    color: #64748b;
+    font-size: 0.9rem;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1rem;
+}
+
+.item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-rating {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.star-icon {
+    color: #f59e0b;
+    margin-right: 0.25rem;
+}
+
+.item-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000080;
+}
+
+/* --- 8. View-Specific Adjustments --- */
+.service-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+}
+
+.service-grid-view .item-image-container {
+    aspect-ratio: 16 / 10;
+}
+
+.service-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.service-list-view .service-item-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.service-list-view .item-image-container {
+    flex: 0 0 300px;
+    height: 200px;
+}
+
+.service-list-view .item-content {
+    flex: 1;
+}

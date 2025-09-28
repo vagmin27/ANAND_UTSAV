@@ -9,7 +9,7 @@ export default function Footer() {
                 <a href="#">Contact</a>
                 <a href="#">Privacy Policy</a>
             </div>
-            <p>&copy; 2025 ShopEase. All rights reserved.</p>
+            <p>&copy; 2025 AnandUstav. All rights reserved.</p>
         </footer>
     );
 }

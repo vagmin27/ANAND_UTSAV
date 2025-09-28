@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import CategorySection from "../components/CategorySection";
-import ProductGrid from "../components/ProductGrid";
+import ServiceGrid from '../components/ServiceGrid';
 import Footer from "../components/Footer";
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
             <Navbar />
             <Hero />
             <CategorySection />
-            <ProductGrid />
+            <ServiceGrid />
             <Footer />
         </div>
     );

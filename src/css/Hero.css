@@ -1,78 +1,70 @@
-/* --- Top Picks Hero Section --- */
+/* Hero viewport and track styles remain the same... */
 .top-picks-hero {
     position: relative;
     width: 100%;
-    height: 80vh;
-    /* Takes a large portion of the viewport height */
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    height: 85vh;
+    min-height: 600px;
     overflow: hidden;
     color: #fff;
+}
+
+.carousel-track {
+    display: flex;
+    height: 100%;
+    width: 500%;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.slide-item {
+    width: 20%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
     box-sizing: border-box;
 }
 
-/* --- Dynamic Blurred Background --- */
-.hero-background {
+.slide-background {
     position: absolute;
-    top: -5%;
-    left: -5%;
-    /* Zoom in slightly to hide edges of blur */
+    inset: -5%;
     width: 110%;
     height: 110%;
     background-size: cover;
     background-position: center;
-    filter: blur(20px) brightness(0.6);
-    /* Blur and darken for readability */
-    z-index: -1;
-    /* Smooth transition for the background image change */
-    transition: background-image 0.8s ease-in-out;
+    filter: blur(15px) brightness(0.5);
+    z-index: 0;
 }
 
-/* --- Main Content Area --- */
 .hero-content {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    z-index: 1;
     text-align: center;
     max-width: 800px;
 }
 
-.hero-details {
-    animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.hero-details,
+.hero-tag,
+.hero-title,
+.hero-description,
+.cta-button {
+    /* Styles for content... */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-tag {
     background-color: rgba(255, 103, 31, 0.8);
-    /* Saffron */
     padding: 0.3rem 0.8rem;
     border-radius: 2rem;
     font-size: 0.9rem;
     font-weight: 600;
-    text-transform: uppercase;
 }
 
 .hero-title {
     font-family: 'Tiro Devanagari Hindi', serif;
-    font-size: 3.5rem;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     margin: 1rem 0;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .hero-description {
@@ -80,12 +72,10 @@
     max-width: 600px;
     margin: 0 auto 2rem auto;
     line-height: 1.6;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .cta-button {
     background: #FF671F;
-    /* Saffron */
     color: #fff;
     border: none;
     border-radius: 2rem;
@@ -93,9 +83,6 @@
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 103, 31, 0.4);
 }
@@ -105,88 +92,77 @@
     box-shadow: 0 8px 25px rgba(255, 103, 31, 0.6);
 }
 
-/* --- Thumbnail Selector Strip --- */
-.picks-selector-container {
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding: 1rem 2rem;
-    box-sizing: border-box;
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-}
 
-.picks-selector-container::-webkit-scrollbar {
-    display: none;
-    /* Chrome, Safari, Opera */
-}
+/* --- ✨ IMPROVED: Dark Glass Theme for Controls --- */
+/* Other styles remain the same... */
 
-.pick-thumbnail {
-    flex: 0 0 180px;
-    /* Fixed width for each thumbnail */
-    height: 100px;
-    border-radius: 0.75rem;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    border: 3px solid transparent;
-    transition: all 0.4s ease;
-    opacity: 0.6;
-}
-
-.pick-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.thumbnail-overlay {
+.carousel-controls-overlay {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 0.5rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
 }
 
-/* Styling for the ACTIVE and HOVER states */
-.pick-thumbnail:hover {
-    opacity: 1;
-    transform: scale(1.05);
+.pagination-dots {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
 }
 
-.pick-thumbnail:hover .thumbnail-overlay {
-    opacity: 1;
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    /* Inactive dots are clickable */
 }
 
-.pick-thumbnail.active {
-    opacity: 1;
-    border-color: #FF671F;
-    /* Saffron border for active item */
+.dot.active {
+    background-color: #FF671F;
+    width: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 103, 31, 0.7);
+    cursor: grab;
+    /* ✨ Show that the active dot can be grabbed */
+}
+
+/* ✨ NEW: Style for when the active dot is being scrubbed */
+.dot.active.scrubbing {
+    cursor: grabbing;
+    transform: scale(1.15);
+    /* Make it pop while dragging */
+    box-shadow: 0 0 15px rgba(255, 103, 31, 1);
+}
+
+.play-pause-btn {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.play-pause-btn:hover {
+    background: rgba(0, 0, 0, 0.4);
     transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(255, 103, 31, 0.5);
-}
-
-/* --- Responsive Design --- */
-@media(max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .hero-description {
-        font-size: 1rem;
-    }
-
-    .pick-thumbnail {
-        flex: 0 0 140px;
-        height: 80px;
-    }
 }

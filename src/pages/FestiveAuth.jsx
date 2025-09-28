@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "../css/FestiveAuth.css"; // Link to the stylesheet
+import React, { useState, useEffect } from "react"; // 1. Import useEffect
+import "../css/FestiveAuth.css";
 
 export default function FestiveAuth() {
   const [activeTab, setActiveTab] = useState("login");
@@ -12,8 +12,19 @@ export default function FestiveAuth() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    console.log("Form submitted:", form);
   };
+
+  // 2. ✨ ADDED: This effect controls the page's scrollbar
+  useEffect(() => {
+    // When this component loads, lock the body's scrollbar
+    document.body.style.overflow = 'hidden';
+
+    // When this component is removed, unlock the scrollbar
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []); // The empty array [] means this runs only once when the component mounts and unmounts
 
   return (
     <div className="auth-container">
@@ -58,7 +69,6 @@ export default function FestiveAuth() {
               required
             />
 
-            {/* ✨ ADDED: Wrapper for the animated field */}
             <div className={`confirm-password-wrapper ${activeTab === 'register' ? 'active' : ''}`}>
               <div className="input-field-inner">
                 <input
@@ -68,7 +78,6 @@ export default function FestiveAuth() {
                   placeholder="Confirm Password"
                   value={form.confirmPassword}
                   onChange={handleInputChange}
-                // The 'required' attribute is handled by the form's logic if needed
                 />
               </div>
             </div>
