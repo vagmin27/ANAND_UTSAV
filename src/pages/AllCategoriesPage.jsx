@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { allCategories } from '../data/data'; // Import from central data file
-import "../css/CategoryStyles.css"; // Reuse the same styles
+import { allCategories } from '../data/categoriesData';
+import "../css/CategoryStyles.css";
 
 export default function AllCategoriesPage() {
     return (

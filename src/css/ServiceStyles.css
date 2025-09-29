@@ -1,46 +1,89 @@
+/* --- Ensure the Google Font is Imported at the top of your CSS --- */
+@import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:wght@400;700&display=swap');
+
+
+/* --- ✨ Global Theme Variables for Consistency --- */
+:root {
+    --primary-color: #FF671F;
+    /* Saffron Orange */
+    --primary-hover: #e65c19;
+    --text-dark: #1F2937;
+    --text-light: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.65);
+    --card-hover-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(255, 255, 255, 0.4);
+    --font-heading: 'Tiro Devanagari Hindi', serif;
+    --font-body: 'Poppins', sans-serif;
+    --shadow-light: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
 /* --- Section & Grid Layout --- */
 .services-section {
-    background-color: #f8f9fa;
-    padding: 5rem 2rem;
+    background-color: #f4f7f6;
+    padding: 5rem clamp(1rem, 5vw, 4rem);
+    font-family: var(--font-body);
+
+    /* ✨ ADD THESE LINES */
+    display: flex;
+    flex-direction: column;
+    /* Stacks children vertically */
+    align-items: center;
+    /* Centers children horizontally */
 }
 
 .section-title {
-    font-family: 'Tiro Devanagari Hindi', serif;
-    font-size: 2.8rem;
-    color: #1a202c;
-    margin-bottom: 3rem;
+    font-family: var(--font-heading);
+    font-size: clamp(2.2rem, 5vw, 2.8rem);
+    font-weight: 700;
     text-align: center;
+    margin-bottom: 3rem;
+
+    /* ✨ 1. Using your theme's primary color */
+    color: var(--primary-color);
+
+    /* ✨ 2. Uppercase with spacing for a more premium feel */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+
+    /* ✨ 3. A subtle glow effect using your theme color */
+    text-shadow: 0px 2px 8px rgba(255, 103, 31, 0.3);
 }
 
 .service-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
-/* --- Glass Service Card --- */
+/* --- ✨ Unified Glass Service Card Styling --- */
 .service-card {
     position: relative;
-    border-radius: 1rem;
+    border-radius: 1.25rem;
+    /* Slightly more rounded */
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-light);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     /* Pushes content overlay to the bottom */
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    height: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 420px;
+    border: 1px solid var(--card-border);
+    /* Subtle border for glass effect */
+    background: #ccc;
+    /* Fallback background */
 }
 
 .service-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-heavy);
 }
 
-/* --- Card Content & Effects --- */
+/* --- Card Background & Content --- */
 .card-background-image {
     position: absolute;
     top: 0;
@@ -49,11 +92,12 @@
     height: 100%;
     object-fit: cover;
     z-index: 1;
-    transition: transform 0.4s ease;
+    transition: transform 0.4s ease, filter 0.4s ease;
 }
 
 .service-card:hover .card-background-image {
     transform: scale(1.1);
+    filter: brightness(1.1);
 }
 
 .service-category-tag {
@@ -61,13 +105,15 @@
     top: 1rem;
     left: 1rem;
     z-index: 3;
-    background: rgba(19, 136, 8, 0.7);
-    backdrop-filter: blur(5px);
+    /* ✨ Using a neutral, dark glass for better contrast */
+    background: rgba(25, 25, 25, 0.6);
+    backdrop-filter: blur(8px);
     border-radius: 2rem;
-    padding: 0.3rem 0.8rem;
-    color: #fff;
+    padding: 0.4rem 0.9rem;
+    color: var(--text-light);
     font-size: 0.8rem;
     font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .card-content-overlay {
@@ -75,16 +121,16 @@
     z-index: 2;
     padding: 1rem;
     margin: 1rem;
-    border-radius: 0.75rem;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    background-color: var(--card-bg);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid var(--card-border);
     transition: background-color 0.3s ease;
 }
 
 .service-card:hover .card-content-overlay {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: var(--card-hover-bg);
 }
 
 .card-top-section,
@@ -100,43 +146,47 @@
 
 .service-name {
     font-size: 1.2rem;
-    font-weight: 600;
-    color: #1F2937;
+    font-weight: 700;
+    color: var(--text-dark);
     margin: 0;
 }
 
 .service-price {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #000080;
+    color: var(--text-dark);
+    /* ✨ Consistent text color */
     margin: 0;
 }
 
+/* --- ✨ Improved Interactive Buttons --- */
 .wishlist-btn {
     background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--card-border);
     border-radius: 50%;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #333;
+    color: var(--text-dark);
     transition: all 0.3s ease;
 }
 
-.wishlist-btn:hover {
-    background: #EC1D67;
-    color: #fff;
+.wishlist-btn:hover,
+.wishlist-btn.active {
+    background: var(--primary-color);
+    color: var(--text-light);
+    transform: scale(1.1);
 }
 
 .booking-btn {
-    background: #FF671F;
-    color: #fff;
+    background: var(--primary-color);
+    color: var(--text-light);
     border: none;
-    border-radius: 0.5rem;
-    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.1rem;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -147,49 +197,36 @@
 }
 
 .booking-btn:hover {
-    background: #e65c19;
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* --- 7. Improved "More Card" Link Styling --- */
+/* --- ✨ Improved & Consistent "More Card" Styling --- */
 .more-services-card {
-    /* ✨ Applying the frosted glass effect */
-    background: rgba(222, 226, 230, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    display: flex;
-    align-items: center;
+    /* ✨ Inherits .service-card styles, overriding where needed */
     justify-content: center;
+    /* Center content vertically */
+    align-items: center;
     text-decoration: none;
-    position: relative;
-    /* For the gradient overlay */
+    background: rgba(255, 255, 255, 0.2);
+    /* Lighter glass for contrast */
 }
 
-/* A subtle radial gradient to create a "glow" behind the content */
-.more-services-card::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
-    transition: all 0.4s ease;
-}
-
-.more-services-card:hover::before {
-    width: 250px;
-    height: 250px;
+/* Remove image hover effects for this specific card */
+.more-services-card:hover .card-background-image {
+    transform: none;
+    filter: none;
 }
 
 .more-card-content {
-    position: relative;
-    /* To sit on top of the gradient */
-    z-index: 2;
     text-align: center;
-    color: #1a202c;
+    color: var(--text-dark);
+    transition: transform 0.3s ease;
+}
+
+.more-services-card:hover .more-card-content {
+    transform: scale(1.05);
 }
 
 .more-card-icon {
@@ -198,15 +235,15 @@
     font-weight: 300;
     margin-bottom: 1rem;
     display: block;
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    color: var(--primary-color);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.more-services-card:hover .more-card-icon {
+    transform: translateX(15px);
 }
 
 .more-card-text {
     font-size: 1.2rem;
-    font-weight: 600;
-}
-
-/* ✨ The hover animation */
-.more-services-card:hover .more-card-icon {
-    transform: translateX(15px);
+    font-weight: 700;
 }

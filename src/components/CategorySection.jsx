@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { allCategories } from '../data/data.js'; // Import from central data file
+import { allCategories } from '../data/categoriesData.js';// Import from central data file
 import "../css/CategoryStyles.css"; // Use the shared CSS file
 
 // We'll show the first 5 categories on the homepage.

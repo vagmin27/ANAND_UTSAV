@@ -1,4 +1,8 @@
-/* --- 1. Main Page Layout --- */
+/* src/css/AllServicesPage.css */
+@import url('./SharedTheme.css');
+/* Assumes you have SharedTheme.css */
+
+/* --- Main Page Layout --- */
 .services-page-container {
     display: flex;
     align-items: flex-start;
@@ -7,9 +11,10 @@
     margin: 0 auto;
     padding: 2rem 3rem;
     background: #f8f9fa;
+    font-family: var(--font-body);
 }
 
-/* --- 2. Sticky Filters Sidebar --- */
+/* --- Sticky Filters Sidebar --- */
 .filters-sidebar {
     flex: 0 0 300px;
     background: #ffffff;
@@ -18,7 +23,6 @@
     box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 120px;
-    /* Adjust based on your navbar height */
 }
 
 .filters-sidebar h3 {
@@ -28,52 +32,8 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
-/* --- 3. Main Content & Enhanced Header --- */
-.main-content {
-    flex: 1;
-}
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.header-left,
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.page-header h1 {
-    font-family: 'Tiro Devanagari Hindi', serif;
-    font-size: 2.8rem;
-    margin: 0;
-}
-
-.search-bar {
-    display: flex;
-    align-items: center;
-    background: #fff;
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #e2e8f0;
-}
-
-.search-bar .search-icon {
-    color: #94a3b8;
-}
-
-.search-bar input {
-    border: none;
-    outline: none;
-    background: transparent;
-    margin-left: 0.5rem;
-}
-
-/* --- 4. Sidebar Filter Styling --- */
+/* --- Sidebar Filter Elements --- */
+/* (This section contains styles for the dropdown, price slider, rating pills, etc.) */
 .filter-group {
     border-bottom: 1px solid #f1f5f9;
     padding: 1.25rem 0;
@@ -115,7 +75,6 @@
     font-size: 0.9rem;
     cursor: pointer;
     -webkit-appearance: none;
-    -moz-appearance: none;
     appearance: none;
 }
 
@@ -147,12 +106,6 @@
     background: #e2e8f0;
     border-radius: 5px;
     outline: none;
-    opacity: 0.7;
-    transition: opacity .2s;
-}
-
-.price-slider:hover {
-    opacity: 1;
 }
 
 .price-slider::-webkit-slider-thumb {
@@ -160,17 +113,7 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #FF671F;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 3px solid #fff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.price-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #FF671F;
+    background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
     border: 3px solid #fff;
@@ -196,13 +139,13 @@
 }
 
 .rating-pill:hover {
-    border-color: #FF671F;
+    border-color: var(--primary-color);
 }
 
 .rating-pill.active {
-    background: #FF671F;
-    color: #fff;
-    border-color: #FF671F;
+    background: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
 }
 
 .clear-filters-btn {
@@ -210,18 +153,65 @@
     text-align: center;
     background: transparent;
     border: none;
-    color: #FF671F;
+    color: var(--primary-color);
     font-weight: 600;
     cursor: pointer;
     margin-top: 1rem;
     padding: 0.5rem;
 }
 
-/* --- 5. Custom Sort Dropdown Styling --- */
-/* --- 5. Custom Sort Dropdown Styling (Improved) --- */
+/* --- Main Content & Header --- */
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.page-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    margin: 0;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+}
+
+.search-bar .search-icon {
+    color: #94a3b8;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    background: transparent;
+    margin-left: 0.5rem;
+}
+
+/* --- Dropdown & View Toggle --- */
 .custom-dropdown {
     position: relative;
-    display: inline-block;
 }
 
 .dropdown-toggle {
@@ -231,37 +221,10 @@
     background-color: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
-    /* Slightly more rounded */
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.dropdown-toggle:hover {
-    border-color: #FF671F;
-    box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.1);
-    /* Saffron glow on hover */
-}
-
-/* ✨ NEW: Style for when the dropdown is open */
-.dropdown-toggle.active {
-    border-color: #FF671F;
-    box-shadow: 0 0 0 3px rgba(255, 103, 31, 0.1);
-}
-
-.dropdown-toggle strong {
-    color: #1a202c;
-}
-
-.dropdown-toggle .chevron-icon {
-    color: #64748b;
-    transition: transform 0.2s ease-in-out;
-}
-
-.dropdown-toggle .chevron-icon.open {
-    transform: rotate(180deg);
 }
 
 .dropdown-menu {
@@ -271,58 +234,27 @@
     z-index: 10;
     background: #ffffff;
     border-radius: 0.75rem;
-    /* ✨ IMPROVED: Softer, more defined shadow */
-    box-shadow: 0 15px 35px rgba(30, 40, 50, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 0.5rem;
     list-style: none;
-    margin: 0;
     width: 220px;
-    /* ✨ IMPROVED: New animation */
-    animation: scale-in 0.2s ease-out;
-    transform-origin: top right;
 }
 
 .dropdown-menu li {
-    display: flex;
-    align-items: center;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155;
 }
 
 .dropdown-menu li:hover {
     background-color: #f8f9fa;
 }
 
-/* ✨ NEW: Adds a checkmark icon to the active option */
 .dropdown-menu li.active {
-    color: #FF671F;
+    color: var(--primary-color);
     font-weight: 600;
 }
 
-.dropdown-menu li.active::before {
-    content: '✓';
-    font-weight: 700;
-    margin-right: 0.75rem;
-}
-
-
-@keyframes scale-in {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* --- 6. View Toggle --- */
 .view-toggle button {
     background: #fff;
     border: 1px solid #e2e8f0;
@@ -334,49 +266,57 @@
 }
 
 .view-toggle button.active {
-    background: #FF671F;
-    color: #fff;
-    border-color: #FF671F;
+    background: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
 }
 
-/* --- 7. Card Styling (Unified) --- */
-.service-item-card {
+/* --- Universal Card Styles --- */
+.service-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.service-card-item {
     background: #ffffff;
     border-radius: 1rem;
     box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.service-item-card:hover {
+.service-card-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-    border-color: #FF671F;
+    border-color: var(--primary-color);
 }
 
-.item-image-container {
+.card-image-container {
     position: relative;
     overflow: hidden;
 }
 
-.item-image-container img {
+.card-image-container img {
     width: 100%;
-    height: 100%;
     display: block;
     object-fit: cover;
     transition: transform 0.4s ease;
 }
 
-.service-item-card:hover .item-image-container img {
+.service-card-item:hover .card-image-container img {
     transform: scale(1.05);
 }
 
-.item-wishlist-btn {
+.card-wishlist-btn {
     position: absolute;
     top: 0.75rem;
     right: 0.75rem;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
     border: 1px solid #e2e8f0;
     border-radius: 50%;
     width: 2.25rem;
@@ -386,92 +326,129 @@
     justify-content: center;
     cursor: pointer;
     color: #475569;
-    transition: all 0.3s ease;
 }
 
-.item-wishlist-btn:hover {
-    background: #EC1D67;
+.card-wishlist-btn:hover {
+    background: var(--wishlist-hover-color, #EC1D67);
     color: #fff;
 }
 
-.item-content {
-    padding: 1.5rem;
+.card-content {
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-}
-
-.item-category {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #FF671F;
-    text-transform: uppercase;
-}
-
-.item-name {
-    font-size: 1.3rem;
-    margin: 0.25rem 0 0.75rem 0;
-}
-
-.item-description {
-    color: #64748b;
-    font-size: 0.9rem;
     flex-grow: 1;
-    margin-bottom: 1.5rem;
-    border-top: 1px solid #f1f5f9;
-    padding-top: 1rem;
 }
 
-.item-footer {
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.5rem;
 }
 
-.item-rating {
+.card-category {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.card-rating {
     display: flex;
     align-items: center;
     font-weight: 600;
+    font-size: 0.9rem;
 }
 
-.star-icon {
+.card-rating .star-icon {
     color: #f59e0b;
     margin-right: 0.25rem;
 }
 
-.item-price {
+.card-name {
     font-size: 1.1rem;
-    font-weight: 700;
-    color: #000080;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    flex-grow: 1;
 }
 
-/* --- 8. View-Specific Adjustments --- */
+.card-description {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.card-price {
+    font-weight: 700;
+}
+
+.card-book-btn {
+    background: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.card-book-btn:hover {
+    background: var(--primary-hover);
+}
+
+/* --- GRID VIEW Specific Styles --- */
 .service-grid-view {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
-.service-grid-view .item-image-container {
+.service-grid-view .card-image-container img {
     aspect-ratio: 16 / 10;
 }
 
+/* --- LIST VIEW Specific Styles --- */
 .service-list-view {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.service-list-view .service-item-card {
-    display: flex;
+.service-list-view .service-card-item {
     flex-direction: row;
     align-items: center;
 }
 
-.service-list-view .item-image-container {
-    flex: 0 0 300px;
-    height: 200px;
+.service-list-view .card-image-container {
+    flex: 0 0 250px;
+    height: 180px;
 }
 
-.service-list-view .item-content {
+.service-list-view .card-image-container img {
+    height: 100%;
+}
+
+.service-list-view .card-content {
     flex: 1;
+}
+
+/* --- No Results Message --- */
+.no-results {
+    grid-column: 1 / -1;
+    /* Span all columns in grid view */
+    text-align: center;
+    padding: 4rem 2rem;
+    font-size: 1.2rem;
+    color: #64748b;
 }

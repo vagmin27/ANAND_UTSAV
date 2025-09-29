@@ -1,87 +1,65 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { allServices } from '../data/servicesData';
 import { allCategories } from '../data/categoriesData';
-import { LayoutGrid, List, Search, ChevronDown } from 'lucide-react';
 import ServiceCard from '../components/ServiceCard';
-import "../css/AllServicesPage.css";
+import { LayoutGrid, List, Search, ChevronDown } from 'lucide-react';
+import "../css/AllServicesPage.css"; // Reuse same CSS for filters & grid/list view
 
-export default function AllServicesPage() {
+export default function CategoryServicesPage() {
+    const { id } = useParams(); // category id from URL
+    const categoryId = Number(id); // convert string to number
+    const category = allCategories.find(cat => cat.id === categoryId);
+
     const [viewMode, setViewMode] = useState('grid');
-    const [price, setPrice] = useState(1000000);
+    const [price, setPrice] = useState(100000);
     const [selectedRating, setSelectedRating] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOpen, setSortOpen] = useState(false);
     const [sortOption, setSortOption] = useState('Popularity');
 
     const sortOptions = ['Popularity', 'Rating', 'Price: Low to High', 'Price: High to Low'];
 
-    // Clear filters
     const clearFilters = () => {
-        setPrice(1000000);
+        setPrice(100000);
         setSelectedRating(null);
-        setSelectedCategory("All");
         setSearchQuery("");
     };
 
-    // Convert selectedCategory to number for comparison if not "All"
-    const selectedCategoryId = selectedCategory === "All" ? null : Number(selectedCategory);
-
-    // Filter + search
-    let filteredServices = allServices.filter(service => {
-        const matchCategory = selectedCategoryId ? service.categoryId === selectedCategoryId : true;
-        const matchPrice = service.price <= price;
-        const matchRating = selectedRating ? service.rating >= selectedRating : true;
-        const matchSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchCategory && matchPrice && matchRating && matchSearch;
-    });
+    // Filter services for this category
+    let filteredServices = allServices
+        .filter(s => s.categoryId === categoryId) // only this category
+        .filter(s => s.price <= price)
+        .filter(s => (selectedRating ? s.rating >= selectedRating : true))
+        .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     // Sorting
-    if (sortOption === 'Rating') filteredServices.sort((a, b) => b.rating - a.rating);
-    else if (sortOption === 'Price: Low to High') filteredServices.sort((a, b) => a.price - b.price);
-    else if (sortOption === 'Price: High to Low') filteredServices.sort((a, b) => b.price - a.price);
-    // Popularity default, keep original order
+    if (sortOption === 'Rating') {
+        filteredServices = filteredServices.sort((a, b) => b.rating - a.rating);
+    } else if (sortOption === 'Price: Low to High') {
+        filteredServices = filteredServices.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'Price: High to Low') {
+        filteredServices = filteredServices.sort((a, b) => b.price - a.price);
+    }
 
     return (
         <div className="services-page-container">
+            {/* Sidebar Filters */}
             <aside className="filters-sidebar">
                 <h3>Filters</h3>
 
-                {/* Category */}
-                <details className="filter-group" open>
-                    <summary>Category <ChevronDown size={16} /></summary>
-                    <div className="custom-select-wrapper">
-                        <select
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                        >
-                            <option value="All">All Categories</option>
-                            {allCategories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                        </select>
-                        <ChevronDown size={16} className="select-arrow" />
-                    </div>
-                </details>
-
-                {/* Price */}
                 <details className="filter-group" open>
                     <summary>Price Range <ChevronDown size={16} /></summary>
                     <div className="price-slider-container">
                         <div className="price-value">Up to ₹{Number(price).toLocaleString('en-IN')}</div>
                         <input
-                            type="range"
-                            min="10000"
-                            max="100000"
-                            step="5000"
-                            value={price}
-                            onChange={(e) => setPrice(Number(e.target.value))}
+                            type="range" min="10000" max="100000" step="5000"
+                            value={price} onChange={(e) => setPrice(Number(e.target.value))}
                             className="price-slider"
                         />
                     </div>
                 </details>
 
-                {/* Rating */}
                 <details className="filter-group" open>
                     <summary>Rating <ChevronDown size={16} /></summary>
                     <div className="rating-options">
@@ -100,10 +78,11 @@ export default function AllServicesPage() {
                 <button className="clear-filters-btn" onClick={clearFilters}>Clear All</button>
             </aside>
 
+            {/* Main Content */}
             <main className="main-content">
                 <header className="page-header">
                     <div className="header-left">
-                        <h1>All Services</h1>
+                        <h1>{category ? category.name : "Category"}</h1>
                         <div className="search-bar">
                             <Search size={18} className="search-icon" />
                             <input
@@ -116,7 +95,6 @@ export default function AllServicesPage() {
                     </div>
 
                     <div className="header-right">
-                        {/* Sort */}
                         <div className="custom-dropdown">
                             <button className={`dropdown-toggle ${sortOpen ? 'active' : ''}`} onClick={() => setSortOpen(!sortOpen)}>
                                 <span>Sort by: <strong>{sortOption}</strong></span>
@@ -137,7 +115,6 @@ export default function AllServicesPage() {
                             )}
                         </div>
 
-                        {/* Grid/List */}
                         <div className="view-toggle">
                             <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}><LayoutGrid /></button>
                             <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}><List /></button>
@@ -145,12 +122,10 @@ export default function AllServicesPage() {
                     </div>
                 </header>
 
-                {/* Services */}
+                {/* Services Display */}
                 <div className={viewMode === 'grid' ? 'service-grid-view' : 'service-list-view'}>
                     {filteredServices.length > 0 ? (
-                        filteredServices.map(service => (
-                            <ServiceCard key={service.id} service={service} />
-                        ))
+                        filteredServices.map(service => <ServiceCard key={service.id} service={service} />)
                     ) : (
                         <p className="no-results">No services match your filters.</p>
                     )}
