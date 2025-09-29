@@ -545,3 +545,40 @@
 .no-results p {
     color: #6b7280;
 }
+
+/* Add this to AllServicesPage.css */
+
+.package-view-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.package-view-info h4 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.package-view-info p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.clear-package-btn {
+    width: 100%;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clear-package-btn:hover {
+    background: var(--primary-hover);
+}

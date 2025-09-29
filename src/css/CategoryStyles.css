@@ -1,173 +1,17 @@
-/* --- 1. Section Container --- */
+/* src/css/CategoryStyles.css */
+@import url('./SharedCard.css');
+
 .categories {
-    /* ✨ NEW: A clean, simple background to let the cards stand out */
     background-color: #f8f9fa;
     padding: 5rem 2rem;
     text-align: center;
 }
 
-/* --- 2. Section Title --- */
 .section-title {
-    font-family: 'Tiro Devanagari Hindi', serif;
+    font-family: var(--font-heading);
     font-size: 2.8rem;
-
-    /* --- 1. Section Container --- */
-    .categories {
-        /* ✨ NEW: A clean, simple background to let the cards stand out */
-        background-color: #f8f9fa;
-        padding: 5rem 2rem;
-        text-align: center;
-    }
-
-    /* --- 2. Section Title --- */
-    .section-title {
-        font-family: 'Tiro Devanagari Hindi', serif;
-        font-size: 2.8rem;
-        font-weight: 700;
-        color: #1a202c;
-        /* Darker text for better contrast */
-        margin-bottom: 3rem;
-        position: relative;
-        display: inline-block;
-    }
-
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60%;
-        height: 4px;
-        background: linear-gradient(90deg, #FF671F, #000080);
-        /* Saffron to Blue gradient */
-        border-radius: 2px;
-    }
-
-    /* --- 3. Responsive Grid Layout --- */
-    .category-grid {
-        /* ✨ NEW: A robust, responsive grid instead of horizontal scroll */
-        display: grid;
-        /* This creates columns that are at least 280px wide, but grow to fill space */
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    /* --- 4. The "Acrylic" Category Card --- */
-    .category-card {
-        position: relative;
-        height: 380px;
-        border-radius: 1rem;
-        overflow: hidden;
-        /* This is crucial for the zoom effect and rounded corners */
-        cursor: pointer;
-
-        /* A very subtle border and shadow for depth */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-
-        /* Align the text overlay to the bottom */
-        display: flex;
-        align-items: flex-end;
-
-        transition: box-shadow 0.3s ease-in-out;
-    }
-
-    /* ✨ NEW: Subtle but premium hover effect */
-    .category-card:hover {
-        /* A glowing border effect using box-shadow */
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1),
-            0 0 0 4px rgba(255, 103, 31, 0.7);
-    }
-
-    /* --- 5. Card Content & Effects --- */
-
-    /* The image serves as the background */
-    .card-background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 1;
-        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .category-card:hover .card-background-image {
-        /* The image zooms in slightly on hover */
-        transform: scale(1.1);
-    }
-
-    /* The "frosted acrylic" panel for the text */
-    .card-content-overlay {
-        position: relative;
-        z-index: 2;
-        /* Sits on top of the image */
-        width: 100%;
-        padding: 1.25rem;
-        box-sizing: border-box;
-
-        /* ✨ NEW: The frosted glass/acrylic effect */
-        background-color: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(12px) saturate(150%);
-        -webkit-backdrop-filter: blur(12px) saturate(150%);
-
-        /* A sharp top border to distinguish the panel */
-        border-top: 1px solid rgba(255, 255, 255, 0.7);
-
-        transition: background-color 0.3s ease;
-    }
-
-    .category-card:hover .card-content-overlay {
-        background-color: rgba(255, 255, 255, 0.7);
-    }
-
-    .card-title {
-        margin: 0;
-        font-weight: 600;
-        font-size: 1.2rem;
-        color: #1a202c;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
-    }
-
-    /* All the styles from the previous version of CategorySection.css go here... */
-    /* ... .categories, .section-title, .category-grid, .category-card, etc. ... */
-
-    /* ✨ NEW STYLE for the "More Categories" link card */
-    .more-categories-card {
-        background: #e9ecef;
-        /* A distinct, neutral background */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: #343a40;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1.2rem;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease-in-out;
-    }
-
-    .more-categories-card .arrow-icon {
-        font-size: 3rem;
-        line-height: 1;
-        margin-bottom: 0.5rem;
-    }
-
-    .more-categories-card:hover {
-        background-color: #dee2e6;
-        /* Match the glow of the other cards */
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1),
-            0 0 0 4px rgba(255, 103, 31, 0.7);
-    }
-
     font-weight: 700;
-    color: #1a202c;
-    /* Darker text for better contrast */
+    color: var(--text-dark);
     margin-bottom: 3rem;
     position: relative;
     display: inline-block;
@@ -181,128 +25,36 @@
     transform: translateX(-50%);
     width: 60%;
     height: 4px;
-    background: linear-gradient(90deg, #FF671F, #000080);
-    /* Saffron to Blue gradient */
+    background: var(--primary-color);
     border-radius: 2px;
 }
 
-/* --- 3. Responsive Grid Layout --- */
 .category-grid {
-    /* ✨ NEW: A robust, responsive grid instead of horizontal scroll */
     display: grid;
-    /* This creates columns that are at least 280px wide, but grow to fill space */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
-/* --- 4. The "Acrylic" Category Card --- */
-.category-card {
-    position: relative;
-    height: 380px;
-    border-radius: 1rem;
-    overflow: hidden;
-    /* This is crucial for the zoom effect and rounded corners */
-    cursor: pointer;
-
-    /* A very subtle border and shadow for depth */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-
-    /* Align the text overlay to the bottom */
-    display: flex;
-    align-items: flex-end;
-
-    transition: box-shadow 0.3s ease-in-out;
-}
-
-/* ✨ NEW: Subtle but premium hover effect */
-.category-card:hover {
-    /* A glowing border effect using box-shadow */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1),
-        0 0 0 4px rgba(255, 103, 31, 0.7);
-}
-
-/* --- 5. Card Content & Effects --- */
-
-/* The image serves as the background */
-.card-background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.category-card:hover .card-background-image {
-    /* The image zooms in slightly on hover */
-    transform: scale(1.1);
-}
-
-/* The "frosted acrylic" panel for the text */
-.card-content-overlay {
-    position: relative;
-    z-index: 2;
-    /* Sits on top of the image */
-    width: 100%;
-    padding: 1.25rem;
-    box-sizing: border-box;
-
-    /* ✨ NEW: The frosted glass/acrylic effect */
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
-
-    /* A sharp top border to distinguish the panel */
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
-
-    transition: background-color 0.3s ease;
-}
-
-.category-card:hover .card-content-overlay {
-    background-color: rgba(255, 255, 255, 0.7);
-}
-
-.card-title {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: #1a202c;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
-}
-
-/* All the styles from the previous version of CategorySection.css go here... */
-/* ... .categories, .section-title, .category-grid, .category-card, etc. ... */
-
-/* ✨ NEW STYLE for the "More Categories" link card */
 .more-categories-card {
     background: #e9ecef;
-    /* A distinct, neutral background */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    color: #343a40;
-    text-decoration: none;
+    color: var(--text-dark);
     font-weight: 600;
     font-size: 1.2rem;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease-in-out;
 }
 
 .more-categories-card .arrow-icon {
     font-size: 3rem;
     line-height: 1;
     margin-bottom: 0.5rem;
+    transition: transform 0.3s ease;
 }
 
-.more-categories-card:hover {
-    background-color: #dee2e6;
-    /* Match the glow of the other cards */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1),
-        0 0 0 4px rgba(255, 103, 31, 0.7);
+.more-categories-card:hover .arrow-icon {
+    transform: translateX(10px);
 }
