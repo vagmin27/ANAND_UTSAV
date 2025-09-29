@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause } from 'lucide-react';
 import "../css/Hero.css";
-
-const topPicks = [
-    { id: 1, title: "The Royal Silk Collection", tag: "New Arrival", description: "Experience unparalleled craftsmanship...", image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800" },
-    { id: 2, title: "Temple Jewellery", tag: "Best Seller", description: "Adorn yourself with timeless, intricate designs...", image: "https://images.unsplash.com/photo-1611652033959-8a8279d45f47?w=800" },
-    { id: 3, title: "Diwali Decor", tag: "Festive Special", description: "Light up your home with our exclusive range...", image: "https://images.unsplash.com/photo-1616047006789-b7af5afb8c20?w=800" },
-    { id: 4, title: "Gourmet Gift Baskets", tag: "Top Rated", description: "The perfect gift of joy, filled with artisanal sweets...", image: "https://images.unsplash.com/photo-1627808003926-d568c077a285?w=800" },
-    { id: 5, title: "Men's Festive Kurtas", tag: "Just In", description: "Celebrate in style with our elegant and comfortable wear...", image: "https://images.unsplash.com/photo-1594657154523-a5a4159a434d?w=800" },
-];
+import { allServices } from "../data/servicesData";
+import { topPicksIds } from "../data/topPicksIds";
 
 export default function Hero() {
+    const topPicks = allServices.filter(service =>
+        topPicksIds.includes(service.id)
+    );
+
+    // ✨ CHANGED: Get the number of slides dynamically
+    const numSlides = topPicks.length;
+
     const [activeIndex, setActiveIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(true);
     const [isScrubbing, setIsScrubbing] = useState(false);
@@ -24,42 +25,33 @@ export default function Hero() {
         setIsPlaying(false);
     };
 
-    // --- REBUILT SCROLLBAR LOGIC ---
-
     const handleScrubStart = (e) => {
         e.preventDefault();
         setIsScrubbing(true);
         setIsPlaying(false);
         dragStartX.current = e.clientX;
-        startScrubIndex.current = activeIndex; // Record the index at the start of the drag
+        startScrubIndex.current = activeIndex;
     };
 
     const handleScrubMove = useCallback((e) => {
-        if (!isScrubbing) return;
+        if (!isScrubbing || numSlides <= 1) return;
 
         const paginationWidth = paginationRef.current?.offsetWidth || 200;
-        // Calculate how many pixels of drag correspond to one slide change
-        const pixelsPerIndex = paginationWidth / (topPicks.length - 1);
-
+        const pixelsPerIndex = paginationWidth / (numSlides - 1);
         const dragDistance = e.clientX - dragStartX.current;
         const indexOffset = Math.round(dragDistance / pixelsPerIndex);
-
         const newIndex = startScrubIndex.current + indexOffset;
+        const clampedIndex = Math.max(0, Math.min(newIndex, numSlides - 1));
 
-        // Clamp the index to be within the valid range [0, 4]
-        const clampedIndex = Math.max(0, Math.min(newIndex, topPicks.length - 1));
-
-        // Update the active index in real-time
         if (clampedIndex !== activeIndex) {
             setActiveIndex(clampedIndex);
         }
-    }, [isScrubbing, activeIndex]);
+    }, [isScrubbing, activeIndex, numSlides]); // ✨ ADDED numSlides to dependency array
 
     const handleScrubEnd = useCallback(() => {
         setIsScrubbing(false);
     }, []);
 
-    // Effect to manage window event listeners for smooth dragging
     useEffect(() => {
         if (isScrubbing) {
             window.addEventListener('mousemove', handleScrubMove);
@@ -71,29 +63,56 @@ export default function Hero() {
         };
     }, [isScrubbing, handleScrubMove, handleScrubEnd]);
 
-    // Auto-play timer
     useEffect(() => {
         let interval;
-        if (isPlaying && !isScrubbing) {
+        if (isPlaying && !isScrubbing && numSlides > 1) { // ✨ Prevent timer if only one slide
             interval = setInterval(() => {
-                setActiveIndex((prev) => (prev + 1) % topPicks.length);
+                setActiveIndex((prev) => (prev + 1) % numSlides);
             }, 4000);
         }
         return () => clearInterval(interval);
-    }, [isPlaying, isScrubbing]);
+    }, [isPlaying, isScrubbing, numSlides]); // ✨ ADDED numSlides to dependency array
+
+    // ✨ CHANGED: Calculate dynamic styles for the track and slides
+    const slideItemWidth = 100 / numSlides;
 
     const trackStyles = {
-        transform: `translateX(-${activeIndex * 100}%)`,
-        // The transition is now ALWAYS on, which creates the smooth follow effect
+        // e.g., for 4 slides, width will be '400%'
+        width: `${numSlides * 100}%`,
+        // e.g., for 4 slides, on index 1, it moves -25%
+        transform: `translateX(-${activeIndex * slideItemWidth}%)`,
         transition: 'transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)',
     };
 
+    const slideItemStyles = {
+        // e.g., for 4 slides, each slide is '25%' wide
+        width: `${slideItemWidth}%`,
+    };
+
+    const getHeroImage = (images) => {
+        if (!images || images.length === 0) return 'https://via.placeholder.com/800x450';
+        return images[0] || images[1] || 'https://via.placeholder.com/800x450';
+    };
+
+    // ✨ ADDED: Handle case with no slides to prevent errors
+    if (numSlides === 0) {
+        return (
+            <section className="top-picks-hero">
+                <div className="slide-item" style={{ justifyContent: 'center', width: '100%' }}>
+                    <p>No top picks available.</p>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="top-picks-hero">
+            {/* ✨ CHANGED: Applied dynamic style object */}
             <div className="carousel-track" style={trackStyles}>
                 {topPicks.map((pick) => (
-                    <div key={pick.id} className="slide-item">
-                        <div className="slide-background" style={{ backgroundImage: `url(${pick.image})` }} />
+                    // ✨ CHANGED: Applied dynamic style object
+                    <div key={pick.id} className="slide-item" style={slideItemStyles}>
+                        <div className="slide-background" style={{ backgroundImage: `url(${getHeroImage(pick.images)})` }} />
                         <div className="hero-content">
                             <div className="hero-details">
                                 <span className="hero-tag">{pick.tag}</span>
@@ -108,21 +127,24 @@ export default function Hero() {
                 ))}
             </div>
 
-            <div className="carousel-controls-overlay">
-                <div className="pagination-dots" ref={paginationRef}>
-                    {topPicks.map((_, index) => (
-                        <div
-                            key={index}
-                            className={`dot ${activeIndex === index ? 'active' : ''} ${isScrubbing && activeIndex === index ? 'scrubbing' : ''}`}
-                            onMouseDown={activeIndex === index ? handleScrubStart : null}
-                            onClick={activeIndex !== index ? () => handleDotClick(index) : null}
-                        />
-                    ))}
+            {/* ✨ Only show controls if there is more than one slide */}
+            {numSlides > 1 && (
+                <div className="carousel-controls-overlay">
+                    <div className="pagination-dots" ref={paginationRef}>
+                        {topPicks.map((_, index) => (
+                            <div
+                                key={index}
+                                className={`dot ${activeIndex === index ? 'active' : ''} ${isScrubbing && activeIndex === index ? 'scrubbing' : ''}`}
+                                onMouseDown={activeIndex === index ? handleScrubStart : null}
+                                onClick={activeIndex !== index ? () => handleDotClick(index) : null}
+                            />
+                        ))}
+                    </div>
+                    <button className="play-pause-btn" onClick={() => setIsPlaying(!isPlaying)}>
+                        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                    </button>
                 </div>
-                <button className="play-pause-btn" onClick={() => setIsPlaying(!isPlaying)}>
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                </button>
-            </div>
+            )}
         </section>
     );
 }
