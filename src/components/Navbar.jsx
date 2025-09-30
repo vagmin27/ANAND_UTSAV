@@ -60,10 +60,8 @@ export default function AnandUtsavNavbar() {
 
                     {/* Center Section */}
                     <nav className="navbar-center">
-                        <NavLink to="/new-arrivals" className="nav-link">New Arrivals</NavLink>
-                        <NavLink to="/sarees" className="nav-link">Sarees</NavLink>
-                        <NavLink to="/gifts" className="nav-link">Gifts & Decor</NavLink>
-                        <NavLink to="/men" className="nav-link">Men's Wear</NavLink>
+                        <NavLink to="/categories" className="nav-link">Categories</NavLink>
+                        <NavLink to="/services" className="nav-link">Services</NavLink>
                     </nav>
 
                     {/* Right Section */}

@@ -1,14 +1,21 @@
 import React from 'react';
 import { Heart, CalendarCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { allCategories } from '../data/categoriesData';
 
 export default function ServiceCard({ service }) {
+
+    function getCategoryName(id) {
+        const cat = allCategories.find(c => c.id === id);
+        return cat ? cat.name : "Unknown";
+    }
+
     return (
         <Link to={`/service/${service.id}`} className="service-card-link">
             <div className="service-card">
                 <img src={service.images[0]} className="card-background-image" alt={service.name} />
 
-                <span className="service-category-tag">{service.category}</span>
+                <span className="service-category-tag">{service.category || getCategoryName(service.categoryId)}</span>
 
                 <div className="card-content-overlay">
                     <div className="card-top-section">

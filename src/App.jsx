@@ -15,10 +15,10 @@ function App() {
         <ScrollToTop />
         <UserProvider>
             <Routes>
+                <Route path="/login" element={<FestiveAuth />} />
                 {/* Routes with Navbar */}
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<FestiveAuth />} />
                     <Route path="/categories" element={<AllCategoriesPage />} />
                     <Route path="/category/:id" element={<CategoryServicesPage />} />
                     <Route path="/service/:id" element={<ServiceDetailsPage />} />
