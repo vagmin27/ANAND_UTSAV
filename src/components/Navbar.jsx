@@ -1,56 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { User, ShoppingCart, Menu, Search, Heart, X } from 'lucide-react';
-import { Link, NavLink } from "react-router-dom";
+import { User, ShoppingCart, Menu, Search, Heart, X, LogOut, UserCircle } from 'lucide-react';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
 import "../css/Navbar.css";
+
+// --- Glass Modal Component ---
+const GlassModal = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <button className="modal-close-btn" onClick={onClose}>
+                    <X size={24} />
+                </button>
+                {children}
+            </div>
+        </div>
+    );
+};
 
 // --- Main Navbar Component ---
 export default function AnandUtsavNavbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const { user, logout } = useUser();
+    const navigate = useNavigate();
 
-    // Effect to detect page scroll
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10); // A small threshold
-        };
+        const handleScroll = () => setIsScrolled(window.scrollY > 10);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Effect to lock body scroll when mobile menu is open
     useEffect(() => {
-        if (isMobileMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-        // Cleanup function
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
+        document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'auto';
+        return () => { document.body.style.overflow = 'auto'; };
     }, [isMobileMenuOpen]);
 
+    const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
+    const handleLogout = () => {
+        logout();
+        setIsProfileOpen(false); // Close modal
+        navigate('/'); // Redirect to home
     };
 
     return (
         <>
             <header className={`navbar-container ${isScrolled ? 'scrolled' : ''}`}>
                 <div className="navbar-content">
-                    {/* --- Left Section --- */}
+                    {/* Left Section */}
                     <div className="navbar-left">
-                        {/* The menu button for mobile view */}
-                        <button className="menu-toggle" onClick={toggleMobileMenu}>
-                            <Menu className="menu-icon" />
-                        </button>
-                        <Link to="/" className="logo-link">
-                            <h1 className="logo">AnandUtsav</h1>
-                        </Link>
+                        <button className="menu-toggle" onClick={toggleMobileMenu}><Menu className="menu-icon" /></button>
+                        <Link to="/" className="logo-link"><h1 className="logo">AnandUtsav</h1></Link>
                     </div>
 
-                    {/* --- Center Section: Navigation Links for Desktop --- */}
+                    {/* Center Section */}
                     <nav className="navbar-center">
                         <NavLink to="/new-arrivals" className="nav-link">New Arrivals</NavLink>
                         <NavLink to="/sarees" className="nav-link">Sarees</NavLink>
@@ -58,33 +66,66 @@ export default function AnandUtsavNavbar() {
                         <NavLink to="/men" className="nav-link">Men's Wear</NavLink>
                     </nav>
 
-                    {/* --- Right Section --- */}
+                    {/* Right Section */}
                     <div className="navbar-right">
-                        <button className="icon-button"><Search /></button>
+                        <button className="icon-button" onClick={() => setIsSearchOpen(true)}><Search /></button>
                         <button className="icon-button"><Heart /></button>
                         <button className="icon-button"><ShoppingCart /></button>
-                        <Link to="/login" className="icon-button user-icon-link">
-                            <User />
-                        </Link>
+                        {user ? (
+                            <button className="icon-button user-icon-link" onClick={() => setIsProfileOpen(true)}>
+                                <User />
+                            </button>
+                        ) : (
+                            <Link to="/login" className="icon-button user-icon-link">
+                                <User />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </header>
 
-            {/* --- Mobile Navigation Overlay --- */}
+            {/* Mobile Navigation Overlay */}
             <div className={`mobile-nav-overlay ${isMobileMenuOpen ? 'active' : ''}`}>
-                <button className="close-menu-btn" onClick={toggleMobileMenu}>
-                    <X size={30} />
-                </button>
+                <button className="close-menu-btn" onClick={toggleMobileMenu}><X size={30} /></button>
                 <nav className="mobile-nav-links">
                     <NavLink to="/" onClick={toggleMobileMenu}>Home</NavLink>
-                    <NavLink to="/new-arrivals" onClick={toggleMobileMenu}>New Arrivals</NavLink>
-                    <NavLink to="/sarees" onClick={toggleMobileMenu}>Sarees</NavLink>
-                    <NavLink to="/gifts" onClick={toggleMobileMenu}>Gifts & Decor</NavLink>
-                    <NavLink to="/men" onClick={toggleMobileMenu}>Men's Wear</NavLink>
-                    <NavLink to="/account" onClick={toggleMobileMenu}>My Account</NavLink>
-                    <NavLink to="/login" onClick={toggleMobileMenu}>Login / Register</NavLink>
+                    {/* ... other mobile links */}
+                    {user ? (
+                        <NavLink to="/account" onClick={toggleMobileMenu}>My Account</NavLink>
+                    ) : (
+                        <NavLink to="/login" onClick={toggleMobileMenu}>Login / Register</NavLink>
+                    )}
                 </nav>
             </div>
+
+            {/* Search Modal */}
+            <GlassModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)}>
+                <div className="search-modal-content">
+                    <h2>Search Products</h2>
+                    <div className="search-input-wrapper">
+                        <Search className="search-modal-icon" />
+                        <input type="text" placeholder="Search for sarees, gifts & more..." />
+                    </div>
+                    <div className="search-suggestions">
+                        <p>Trending:</p>
+                        <span>Banarasi Saree</span>
+                        <span>Wedding Gifts</span>
+                        <span>Kurta for Men</span>
+                    </div>
+                </div>
+            </GlassModal>
+
+            {/* Profile Modal */}
+            <GlassModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}>
+                <div className="profile-modal-content">
+                    <h2>My Account</h2>
+                    <p className="user-email">{user?.email}</p>
+                    <div className="profile-actions">
+                        <button className="profile-action-btn"><UserCircle /> View Profile</button>
+                        <button onClick={handleLogout} className="profile-action-btn logout-btn"><LogOut /> Logout</button>
+                    </div>
+                </div>
+            </GlassModal>
         </>
     );
 }
