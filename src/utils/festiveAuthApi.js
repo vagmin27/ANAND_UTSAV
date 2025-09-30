@@ -1,6 +1,5 @@
 // src/services/festiveAuthApi.js
-
-const BASE_URL = "https://anandutsav-backend.vercel.app";
+const BASE_URL = "https://anand-u.vercel.app";
 
 /**
  * A generic function to handle API POST requests.
@@ -15,23 +14,36 @@ async function apiRequest(endpoint, payload) {
             body: JSON.stringify(payload),
         });
 
-        // Check if the response is JSON before trying to parse it
         const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            const data = await response.json();
-            if (!response.ok) {
-                return { success: false, message: data.message || `Server error: ${response.status}` };
-            }
-            return data;
+        let data;
+
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
         } else {
-            // The response was not JSON. Show the text content for debugging.
             const errorText = await response.text();
             console.error("Server response was not JSON:", errorText);
-            return { success: false, message: "An unexpected error occurred. The server response was not in the correct format." };
+            return {
+                success: false,
+                message:
+                    "An unexpected error occurred. The server response was not in the correct format.",
+            };
         }
+
+        // ✅ Always return server message, even if not ok (400, 401, etc.)
+        if (!response.ok) {
+            return {
+                success: false,
+                message: data.message || `Server error: ${response.status}`,
+            };
+        }
+
+        return data; // success case
     } catch (error) {
         console.error(`API Request Error to ${endpoint}:`, error);
-        return { success: false, message: "Network error. Please check your connection." };
+        return {
+            success: false,
+            message: "Network error. Please check your connection.",
+        };
     }
 }
 
@@ -62,9 +74,10 @@ export function sendOtpRequest(tab, formData) {
  * Sends the email and OTP for verification.
  */
 export function verifyOtpRequest(tab, formData) {
-    const endpoint = tab === "login"
-        ? "/auth/login/verifyotp"
-        : "/auth/register/verifyotp";
+    const endpoint =
+        tab === "login"
+            ? "/auth/login/verifyotp"
+            : "/auth/register/verifyotp";
 
     const payload = {
         email: formData.email,

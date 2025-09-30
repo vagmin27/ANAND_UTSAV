@@ -3,12 +3,12 @@ import { Heart, CalendarCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { allCategories } from '../data/categoriesData';
 
-export default function ServiceCard({ service }) {
+function getCategoryName(id) {
+    const cat = allCategories.find(c => c.id === id);
+    return cat ? cat.name : "Unknown";
+}
 
-    function getCategoryName(id) {
-        const cat = allCategories.find(c => c.id === id);
-        return cat ? cat.name : "Unknown";
-    }
+export default function ServiceCard({ service }) {
 
     return (
         <Link to={`/service/${service.id}`} className="service-card-link">

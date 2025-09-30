@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { allServices } from '../data/servicesData';
 import '../css/ServiceDetailsPage.css'; // Using the updated CSS
 import { CalendarCheck } from 'lucide-react';
+import { allCategories } from '../data/categoriesData';
 
 // Helper component to display star ratings
 const StarRating = ({ rating }) => {
@@ -16,6 +17,11 @@ const StarRating = ({ rating }) => {
         </div>
     );
 };
+
+function getCategoryName(id) {
+    const cat = allCategories.find(c => c.id === id);
+    return cat ? cat.name : "Unknown";
+}
 
 export default function ServiceDetailsPage() {
     const { id } = useParams();
@@ -59,7 +65,7 @@ export default function ServiceDetailsPage() {
                 <div className="service-info">
                     {/* ... (meta-info, h1, description) ... */}
                     <div className="meta-info">
-                        <span className="category-tag">{service.category}</span>
+                        <span className="category-tag">{service.category || getCategoryName(service.categoryId)}</span>
                         <div className="rating-display">
                             <span className="star-icon">★</span>
                             <span>{service.rating}</span>
