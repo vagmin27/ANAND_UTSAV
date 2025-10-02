@@ -105,23 +105,27 @@ export default function FestiveAuth() {
         {notification.message && <div className={`notification ${notification.type}`}>{notification.message}</div>}
 
         <div className="form-content">
+          {/* LOGIN FORM */}
           {activeTab === "login" &&
             (loginStep === "email" ? (
               <form onSubmit={handleSendOtp} className="auth-form">
                 <h2>Welcome Back!</h2>
-                <div className="input-group"><input id="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} required /></div>
+                <div className="input-group">
+                  <input id="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} required />
+                </div>
                 <button type="submit" className="submit-btn" disabled={isLoading}>{isLoading ? "Sending..." : "Request OTP"}</button>
               </form>
             ) : (
               <form onSubmit={handleVerifyOtp} className="auth-form">
                 <h2>Verify OTP</h2>
                 <p className="otp-info">OTP sent to <strong>{formData.email}</strong></p>
-                <div className="input-group"><input id="otp" type="text" placeholder="Enter 6-digit OTP" value={formData.otp} onChange={handleInputChange} required maxLength="6" /></div>
+                <div className="input-group"><input id="otp" type="text" placeholder="Enter OTP" value={formData.otp} onChange={handleInputChange} required maxLength="6" /></div>
                 <button type="submit" className="submit-btn" disabled={isLoading}>{isLoading ? "Verifying..." : "Verify & Login"}</button>
                 <button type="button" className="back-btn" onClick={() => setLoginStep("email")}>Back</button>
               </form>
             ))}
 
+          {/* REGISTER FORM */}
           {activeTab === "register" &&
             (registerStep === "details" ? (
               <form onSubmit={handleSendOtp} className="auth-form register-form">
@@ -131,7 +135,6 @@ export default function FestiveAuth() {
                 <div className="input-group"><input id="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} required /></div>
                 <div className="input-group"><input id="phone" type="tel" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required /></div>
 
-                {/* --- The Gender dropdown is now here, before Location --- */}
                 <div className="input-group" ref={genderMenuRef}>
                   <div className="custom-select-container">
                     <button type="button" className="custom-select-trigger" onClick={() => setIsGenderMenuOpen(!isGenderMenuOpen)}>
@@ -156,11 +159,18 @@ export default function FestiveAuth() {
               <form onSubmit={handleVerifyOtp} className="auth-form">
                 <h2>Verify OTP</h2>
                 <p className="otp-info">OTP sent to <strong>{formData.email}</strong></p>
-                <div className="input-group"><input id="otp" type="text" placeholder="Enter 6-digit OTP" value={formData.otp} onChange={handleInputChange} required maxLength="6" /></div>
+                <div className="input-group"><input id="otp" type="text" placeholder="Enter OTP" value={formData.otp} onChange={handleInputChange} required maxLength="6" /></div>
                 <button type="submit" className="submit-btn" disabled={isLoading}>{isLoading ? "Verifying..." : "Complete Registration"}</button>
                 <button type="button" className="back-btn" onClick={() => setRegisterStep("details")}>Back</button>
               </form>
             ))}
+
+          {/* PROVIDER LOGIN BUTTON */}
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <button className="submit-btn" style={{ width: "100%", backgroundColor: "#555" }} onClick={() => navigate("/provider-login")}>
+              Login as Provider
+            </button>
+          </div>
         </div>
       </div>
     </div>
