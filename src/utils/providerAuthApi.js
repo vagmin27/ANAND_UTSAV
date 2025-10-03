@@ -1,74 +1,53 @@
-const BASE_URL = "https://anand-u.vercel.app/provider";
+import axios from "axios";
 
-/**
- * A generic function to handle API POST requests.
- */
+// Use relative URL for Vite proxy
+const BASE_URL = "/provider/auth";
+
+// General API request with logging
 async function apiRequest(endpoint, payload) {
-  const url = `${BASE_URL}${endpoint}`;
-
+  console.log("➡️ API Request:", endpoint, payload);
   try {
-    const response = await fetch(url, {
-      method: "POST",
+    const res = await axios.post(`${BASE_URL}${endpoint}`, payload, {
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      withCredentials: true, // keep this if backend sets cookies
     });
-
-    const contentType = response.headers.get("content-type");
-    let data;
-
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      const errorText = await response.text();
-      console.error("Server response was not JSON:", errorText);
-      return {
-        success: false,
-        message:
-          "An unexpected error occurred. The server response was not in the correct format.",
-      };
-    }
-
-    if (!response.ok) {
-      return {
-        success: false,
-        message: data.message || `Server error: ${response.status}`,
-      };
-    }
-
-    return data;
-  } catch (error) {
-    console.error(`API Request Error to ${endpoint}:`, error);
+    console.log("✅ API Response:", res.data);
+    return res.data;
+  } catch (err) {
+    console.error("❌ API Error:", err.response?.data || err.message);
     return {
       success: false,
-      message: "Network error. Please check your connection.",
+      msg: err.response?.data?.msg || err.response?.data?.message || err.message,
     };
   }
 }
 
-/**
- * Register a new service provider.
- */
-export function registerServiceProvider(payload) {
-  return apiRequest("/register", payload);
-}
+// --- LOGIN ---
+export const providerLoginRequest = (formData) =>
+  apiRequest("/login", {
+    email: formData.email?.trim(),
+    password: formData.password?.trim(),
+  });
 
-/**
- * Login as service provider.
- */
-export function loginServiceProvider(payload) {
-  return apiRequest("/login", payload);
-}
+// --- REGISTER ---
+export const providerRegisterRequest = (formData) =>
+  apiRequest("/register", {
+    name: formData.name?.trim(),
+    gender: formData.gender?.trim(),
+    phone: formData.phone?.trim(),
+    location: formData.location?.trim(),
+    email: formData.email?.trim(),
+    password: formData.password?.trim(),
+  });
 
-/**
- * Send forgot password OTP to service provider's email.
- */
-export function sendForgotPasswordOtp(email) {
-  return apiRequest("/forgototp", { email });
-}
+// --- FORGOT PASSWORD ---
+export const providerForgotPasswordRequest = (email) =>
+  apiRequest("/forgototp", { email: email?.trim() });
 
-/**
- * Reset service provider password with OTP.
- */
-export function resetServiceProviderPassword(payload) {
-  return apiRequest("/verifyOtp", payload);
-}
+// --- RESET PASSWORD ---
+export const providerResetPasswordRequest = (formData) =>
+  apiRequest("/verifyOtp", {
+    email: formData.email?.trim(),
+    otp: formData.otp?.trim(),
+    newpassword: formData.password?.trim(),
+  });
