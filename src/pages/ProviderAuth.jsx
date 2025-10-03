@@ -6,6 +6,7 @@ import {
   providerForgotPasswordRequest,
   providerResetPasswordRequest,
 } from "../utils/providerAuthApi";
+import { providerLogoutRequest } from "../utils/providerAuthApi";
 import "../css/FestiveAuth.css";
 
 const INITIAL_FORM = {
@@ -79,6 +80,19 @@ export default function ProviderAuth() {
     }
     setLoading(false);
   };
+  const handleLogout = async () => {
+  setLoading(true);
+  const res = await providerLogoutRequest();
+  if (res.success) {
+    notify("✅ Logged out successfully", "success");
+    // Clear form and reset tabs
+    changeTab("login");
+  } else {
+    notify(res.msg || "❌ Logout failed", "error");
+  }
+  setLoading(false);
+};
+
 
   // ---------------- REGISTER ----------------
   const handleRegister = async (e) => {
