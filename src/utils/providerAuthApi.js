@@ -66,7 +66,7 @@ export const providerAddServiceRequest = async (serviceData) => {
   try {
     const res = await axios.post(`${SERVICE_URL}/addService`, serviceData, {
       headers: { "Content-Type": "application/json" },
-      withCredentials: true,
+      withCredentials: true, // send cookie automatically
     });
     return res.data;
   } catch (err) {
@@ -74,26 +74,33 @@ export const providerAddServiceRequest = async (serviceData) => {
   }
 };
 
-// // --- FETCH SERVICES ---
-// export const providerFetchServices = async () => {
-//   try {
-//     const res = await axios.get(`${SERVICE_URL}/services`, {
-//       withCredentials: true,
-//     });
-//     return res.data;
-//   } catch (err) {
-//     return { success: false, msg: "Failed to fetch services", services: [] };
-//   }
-// };
 
-// // --- DELETE SERVICE ---
-// export const providerDeleteService = async (id) => {
-//   try {
-//     const res = await axios.delete(`${SERVICE_URL}/services/${id}`, {
-//       withCredentials: true,
-//     });
-//     return res.data;
-//   } catch (err) {
-//     return { success: false, msg: "Failed to delete service" };
-//   }
-// };
+// --- FETCH SERVICES ---
+export const providerFetchServices = async () => {
+  try {
+    const res = await axios.get(`${SERVICE_URL}/getallServicesByProvider`, {
+      withCredentials: true,
+    });
+
+    // Backend returns { services: [...] } -> use res.data.services
+    const servicesArray = Array.isArray(res.data.services) ? res.data.services : [];
+
+    return { success: true, services: servicesArray };
+  } catch (err) {
+    console.error(err.response || err);
+    return { success: false, msg: "Failed to fetch services", services: [] };
+  }
+};
+
+
+// --- DELETE SERVICE ---
+export const providerDeleteService = async (id) => {
+  try {
+    const res = await axios.delete(`${SERVICE_URL}/deleteService/${id}`, {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (err) {
+    return { success: false, msg: "Failed to delete service" };
+  }
+};

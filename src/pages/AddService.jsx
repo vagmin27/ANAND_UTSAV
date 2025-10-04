@@ -6,10 +6,10 @@ export default function AddService() {
   const [form, setForm] = useState({
     name: "",
     categoryName: "",
-    priceAmount: "", // new
-    priceUnit: "full", // default
+    priceAmount: "",
+    priceUnit: "full",
     description: "",
-    images: "", // store as string for input field
+    images: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -19,14 +19,11 @@ export default function AddService() {
     e.preventDefault();
     setLoading(true);
 
-    // ✅ Always send images as array, priceInfo as object
     const payload = {
       name: form.name.trim(),
       categoryName: form.categoryName.trim(),
       description: form.description.trim(),
-      images: form.images
-        ? form.images.split(",").map((img) => img.trim())
-        : [],
+      images: form.images ? form.images.split(",").map((img) => img.trim()) : [],
       priceInfo: {
         amount: Number(form.priceAmount),
         unit: form.priceUnit,
@@ -37,7 +34,9 @@ export default function AddService() {
 
     if (res.success) {
       alert("✅ Service added successfully");
-      navigate("/provider/dashboard");
+
+      // ✅ Pass the new service to dashboard instantly
+      navigate("/provider/dashboard", { state: { newService: res.service } });
     } else {
       alert(res.msg || "❌ Failed to add service");
     }
@@ -56,13 +55,34 @@ export default function AddService() {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           required
         />
-        <input
-          type="text"
-          placeholder="Category Name"
+        <select
           value={form.categoryName}
           onChange={(e) => setForm({ ...form, categoryName: e.target.value })}
           required
-        />
+        >
+          <option value="">Select Category</option>
+          <option value="Catering">Catering</option>
+          <option value="Decorations">Decorations</option>
+          <option value="Photography">Photography</option>
+          <option value="Videography">Videography</option>
+          <option value="Beauty & Makeup">Beauty & Makeup</option>
+          <option value="Fashion & Attire">Fashion & Attire</option>
+          <option value="Invitations">Invitations</option>
+          <option value="Venues">Venues</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Music Bands">Music Bands</option>
+          <option value="DJs">DJs</option>
+          <option value="Travel">Travel</option>
+          <option value="Transport">Transport</option>
+          <option value="Event Planning">Event Planning</option>
+          <option value="Florists">Florists</option>
+          <option value="Production (Sound & Lights)">Production (Sound & Lights)</option>
+          <option value="Fireworks">Fireworks</option>
+          <option value="Mehndi Artists">Mehndi Artists</option>
+          <option value="Gifting">Gifting</option>
+          <option value="Jewellery">Jewellery</option>
+        </select>
+
         <input
           type="number"
           placeholder="Price Amount"
