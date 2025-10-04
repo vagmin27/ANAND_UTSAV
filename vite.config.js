@@ -8,13 +8,4 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  server: {
-    proxy: {
-      "/provider/auth": {
-        target: "https://anand-u.vercel.app",
-        changeOrigin: true,
-        secure: true,
-      },
-    },
-  },
 })

@@ -15,7 +15,6 @@ export default function ServiceCard({ service }) {
 
     return (
         <div className="service-card-wrapper">
-            {/* keep link for main content but not for heart (prevent navigation when clicking heart) */}
             <Link to={`/service/${service.id}`} className="service-card-link">
                 <div className="service-card">
                     <img src={service.images[0]} className="card-background-image" alt={service.name} />
@@ -39,14 +38,22 @@ export default function ServiceCard({ service }) {
                             >
                                 <Heart
                                     size={18}
-                                    fill={isFav ? "red" : "none"}  // filled if favourite
+                                    fill={isFav ? "red" : "none"}
                                     color={isFav ? "red" : "currentColor"}
                                 />
                             </button>
                         </div>
 
                         <div className="card-bottom-section">
-                            <p className="service-price">{service.priceInfo}</p>
+                            {/* ✅ Render priceInfo safely */}
+                            {service.priceInfo ? (
+                                <p className="service-price">
+                                    {service.priceInfo.amount} / {service.priceInfo.unit}
+                                </p>
+                            ) : (
+                                <p className="service-price">Price not available</p>
+                            )}
+                            
                             <button className="booking-btn">
                                 <CalendarCheck size={16} />
                                 <span>Book Now</span>
