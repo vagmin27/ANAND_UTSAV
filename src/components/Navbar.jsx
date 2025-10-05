@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, ShoppingCart, Menu, Search, Heart, X, LogOut, UserCircle } from 'lucide-react';
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { User, ShoppingCart, Menu, Search, Heart, X, LogOut, UserCircle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import "../css/Navbar.css";
 
@@ -20,21 +20,24 @@ const GlassModal = ({ isOpen, onClose, children }) => {
     );
 };
 
-// --- Main Navbar Component ---
+// --- Main Navbar ---
 export default function AnandUtsavNavbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const { user, logout } = useUser();
+
+    const { user, logout, favourites } = useUser();
     const navigate = useNavigate();
 
+    // --- Scroll effect ---
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // --- Lock scroll when mobile menu is open ---
     useEffect(() => {
         document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'auto';
         return () => { document.body.style.overflow = 'auto'; };
@@ -44,40 +47,49 @@ export default function AnandUtsavNavbar() {
 
     const handleLogout = () => {
         logout();
-        setIsProfileOpen(false); // Close modal
-        navigate('/'); // Redirect to home
+        setIsProfileOpen(false);
+        navigate('/');
     };
 
-    // ✅ favourites count
-    const favCount = user?.favourites?.length || 0;
+    // --- Favourites count (reactive) ---
+    const favCount = favourites?.length||0;
 
     return (
         <>
             <header className={`navbar-container ${isScrolled ? 'scrolled' : ''}`}>
                 <div className="navbar-content">
-                    {/* Left Section */}
+
+                    {/* Left */}
                     <div className="navbar-left">
-                        <button className="menu-toggle" onClick={toggleMobileMenu}><Menu className="menu-icon" /></button>
-                        <Link to="/" className="logo-link"><h1 className="logo">AnandUtsav</h1></Link>
+                        <button className="menu-toggle" onClick={toggleMobileMenu}>
+                            <Menu />
+                        </button>
+                        <Link to="/" className="logo-link">
+                            <h1 className="logo">AnandUtsav</h1>
+                        </Link>
                     </div>
 
-                    {/* Center Section */}
+                    {/* Center */}
                     <nav className="navbar-center">
                         <NavLink to="/categories" className="nav-link">Categories</NavLink>
                         <NavLink to="/services" className="nav-link">Services</NavLink>
                     </nav>
 
-                    {/* Right Section */}
+                    {/* Right */}
                     <div className="navbar-right">
-                        <button className="icon-button" onClick={() => setIsSearchOpen(true)}><Search /></button>
+                        <button className="icon-button" onClick={() => setIsSearchOpen(true)}>
+                            <Search />
+                        </button>
 
-                        {/* ❤️ Favourites with count */}
                         <Link to="/favourites" className="icon-button favourites-btn">
                             <Heart />
                             {favCount > 0 && <span className="badge">{favCount}</span>}
                         </Link>
 
-                        <button className="icon-button"><ShoppingCart /></button>
+                        <button className="icon-button">
+                            <ShoppingCart />
+                        </button>
+
                         {user ? (
                             <button className="icon-button user-icon-link" onClick={() => setIsProfileOpen(true)}>
                                 <User />
@@ -91,12 +103,15 @@ export default function AnandUtsavNavbar() {
                 </div>
             </header>
 
-            {/* Mobile Navigation Overlay */}
+            {/* Mobile Menu */}
             <div className={`mobile-nav-overlay ${isMobileMenuOpen ? 'active' : ''}`}>
-                <button className="close-menu-btn" onClick={toggleMobileMenu}><X size={30} /></button>
+                <button className="close-menu-btn" onClick={toggleMobileMenu}>
+                    <X size={30} />
+                </button>
                 <nav className="mobile-nav-links">
                     <NavLink to="/" onClick={toggleMobileMenu}>Home</NavLink>
-                    {/* ... other mobile links */}
+                    <NavLink to="/categories" onClick={toggleMobileMenu}>Categories</NavLink>
+                    <NavLink to="/services" onClick={toggleMobileMenu}>Services</NavLink>
                     {user ? (
                         <NavLink to="/account" onClick={toggleMobileMenu}>My Account</NavLink>
                     ) : (
@@ -129,7 +144,9 @@ export default function AnandUtsavNavbar() {
                     <p className="user-email">{user?.email}</p>
                     <div className="profile-actions">
                         <button className="profile-action-btn"><UserCircle /> View Profile</button>
-                        <button onClick={handleLogout} className="profile-action-btn logout-btn"><LogOut /> Logout</button>
+                        <button onClick={handleLogout} className="profile-action-btn logout-btn">
+                            <LogOut /> Logout
+                        </button>
                     </div>
                 </div>
             </GlassModal>

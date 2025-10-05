@@ -1,20 +1,41 @@
-import React, { useState } from "react";
-import { allServices } from "../data/servicesData";
+import React, { useState, useEffect } from "react";
+import { LayoutGrid, LayoutList } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import FavouriteSlide from "../components/FavouriteSlide";
 import FavouriteCard from "../components/FavouriteCard";
-import { LayoutGrid, LayoutList } from "lucide-react";
 import "../css/Favourites.css";
+import axios from "axios";
 
 export default function Favourites() {
-  const { user } = useUser();
-  const [viewMode, setViewMode] = useState("slide"); // "slide" or "card"
+  const { user, favourites, token } = useUser();
+  const [favouriteServices, setFavouriteServices] = useState([]);
+  const [viewMode, setViewMode] = useState("slide");
+
+  useEffect(() => {
+  if (favourites.length > 0 && token) {
+    const fetchFavouriteServices = async () => {
+      try {
+        const res = await axios.get(
+          "https://anand-u.vercel.app/provider/allservices",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const allServices = res.data; // array of all services
+        const favServices = allServices.filter(s => favourites.includes(s._id));
+
+        setFavouriteServices(favServices);
+      } catch (err) {
+        console.error("Failed to fetch favourite services:", err);
+      }
+    };
+    fetchFavouriteServices();
+  } else {
+    setFavouriteServices([]);
+  }
+}, [favourites, token]);
+
 
   if (!user) return <p>Please login to see your favourites.</p>;
-
-  const favouriteServices = allServices.filter(service =>
-    user.favourites?.includes(service.id)
-  );
 
   return (
     <div className="favourites-page">
@@ -44,8 +65,8 @@ export default function Favourites() {
         <FavouriteSlide services={favouriteServices} />
       ) : (
         <div className="favourite-cards-grid">
-          {favouriteServices.map(service => (
-            <FavouriteCard key={service.id} service={service} />
+          {favouriteServices.map((service) => (
+            <FavouriteCard key={service._id} service={service} />
           ))}
         </div>
       )}

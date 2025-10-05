@@ -5,17 +5,16 @@ import { useUser } from "../context/UserContext";
 import "../css/Favourites.css";
 
 export default function FavouriteSlide({ services }) {
-  const { toggleFavourite, user } = useUser();
+  const { favourites, toggleFavourite } = useUser();
 
   return (
     <div className="slide-view">
       {services.map((service) => {
-        const isFavourite = user?.favourites.includes(service.id);
+        const isFavourite = favourites.includes(service._id);
 
         return (
-          <div key={service.id} className="service-card">
-            {/* Background Image */}
-            <Link to={`/service/${service.id}`} className="service-card-link">
+          <div key={service._id} className="service-card">
+            <Link to={`/service/${service._id}`} className="service-card-link">
               <img
                 src={service.images[0]}
                 alt={service.name}
@@ -23,14 +22,12 @@ export default function FavouriteSlide({ services }) {
               />
             </Link>
 
-            {/* White Overlay Box */}
             <div className="card-content-overlay">
-              {/* --- Top row: Name + Heart --- */}
               <div className="card-top-section">
                 <h4 className="service-name">{service.name}</h4>
                 <button
                   className={`wishlist-btn ${isFavourite ? "active" : ""}`}
-                  onClick={() => toggleFavourite(service.id)}
+                  onClick={() => toggleFavourite(service._id)}
                   aria-label="Toggle Favourite"
                 >
                   <Heart
@@ -41,10 +38,11 @@ export default function FavouriteSlide({ services }) {
                 </button>
               </div>
 
-              {/* --- Price under name --- */}
-              <p className="service-price">{service.priceInfo}</p>
+              <p className="service-price">
+  ₹{service.priceInfo?.amount || 0} {service.priceInfo?.unit ? `/ ${service.priceInfo.unit}` : ""}
+</p>
 
-              {/* --- Bottom row: Book Now --- */}
+
               <div className="card-bottom-section">
                 <button className="booking-btn">
                   <CalendarCheck size={18} />
