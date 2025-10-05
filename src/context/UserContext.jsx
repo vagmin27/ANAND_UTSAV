@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 const UserContext = createContext(null);
 
@@ -7,60 +8,82 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(() => localStorage.getItem('authToken'));
+    const [favourites, setFavourites] = useState([]);
 
-    // ✅ Load user + favourites from localStorage if session exists
+    // Restore session
     useEffect(() => {
         const storedToken = localStorage.getItem('authToken');
-        const storedFavourites = JSON.parse(localStorage.getItem('favourites')) || [];
-
         if (storedToken) {
             setToken(storedToken);
-            setUser({
-                loggedIn: true,
-                favourites: storedFavourites,
-            });
+            setUser({ loggedIn: true });
+            fetchFavourites(storedToken); // fetch favourites on load
         }
     }, []);
 
-    // ✅ Function to handle login
+    // Login
     const login = (userData, authToken) => {
         localStorage.setItem('authToken', authToken);
         setToken(authToken);
-
-        // If no favourites in userData, set empty array
-        const updatedUser = { ...userData, favourites: userData.favourites || [] };
-
-        setUser(updatedUser);
-        localStorage.setItem('favourites', JSON.stringify(updatedUser.favourites));
+        setUser(userData);
+        fetchFavourites(authToken); // fetch favourites after login
     };
 
-    // ✅ Function to handle logout
+    // Logout
     const logout = () => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('favourites');
         setToken(null);
         setUser(null);
+        setFavourites([]);
     };
 
-    // ✅ Function to toggle favourite section
-    const toggleFavourite = (sectionId) => {
-        if (!user) return;
-
-        let updatedFavourites;
-        if (user.favourites?.includes(sectionId)) {
-            updatedFavourites = user.favourites.filter(id => id !== sectionId);
-        } else {
-            updatedFavourites = [...(user.favourites || []), sectionId];
+    // --- Fetch favourites from backend
+const fetchFavourites = async (authToken) => {
+    try {
+        const res = await axios.get('https://anand-u.vercel.app/user/getFavorite', {
+            headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (res.data.success) {
+            // store only IDs
+            const favIds = res.data.favorites.map(f => f._id ? f._id : f);
+            setFavourites(favIds);
         }
+    } catch (err) {
+        console.error('Error fetching favourites:', err);
+    }
+};
 
-        const updatedUser = { ...user, favourites: updatedFavourites };
-        setUser(updatedUser);
+// --- Toggle favourite (optimistic UI)
+const toggleFavourite = async (serviceId) => {
+    if (!user) return alert('Please login to manage favourites');
 
-        // persist locally
-        localStorage.setItem('favourites', JSON.stringify(updatedFavourites));
-    };
+    const isFav = favourites.includes(serviceId);
+    const updatedFavourites = isFav
+        ? favourites.filter(id => id !== serviceId)
+        : [...favourites, serviceId];
 
-    const value = { user, token, login, logout, toggleFavourite };
+    setFavourites(updatedFavourites);
+
+    try {
+        if (isFav) {
+            await axios.delete('https://anand-u.vercel.app/user/removeFavorite', {
+                data: { serviceId },
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        } else {
+            await axios.post(
+                'https://anand-u.vercel.app/user/addFavorite',
+                { serviceId },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+        }
+    } catch (err) {
+        console.error('Error toggling favourite:', err);
+        setFavourites(favourites); // rollback if error
+    }
+};
+
+
+    const value = { user, token, login, logout, favourites, toggleFavourite };
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

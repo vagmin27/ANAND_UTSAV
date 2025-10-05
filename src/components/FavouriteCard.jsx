@@ -5,39 +5,38 @@ import { useUser } from "../context/UserContext";
 import "../css/Favourites.css";
 
 export default function FavouriteCard({ service }) {
-  const { toggleFavourite, user } = useUser();
-  const isFavourite = user?.favourites.includes(service.id);
+  const { favourites, toggleFavourite } = useUser();
+  const isFavourite = favourites.includes(service._id);
 
   return (
     <div className="fullwidth-card">
-      {/* Image */}
-      <Link to={`/service/${service.id}`} className="fullwidth-image-link">
+      <Link to={`/service/${service._id}`} className="fullwidth-image-link">
         <div className="fullwidth-image">
           <img src={service.images[0]} alt={service.name} />
         </div>
       </Link>
 
-      {/* Overlay */}
       <div className="fullwidth-overlay">
-        {/* Left: name + price */}
         <div className="overlay-left">
           <h4 className="service-name">{service.name}</h4>
-          <p className="service-price">{service.priceInfo}</p>
+          <p className="service-price">
+  ₹{service.priceInfo?.amount || 0} {service.priceInfo?.unit ? `/ ${service.priceInfo.unit}` : ""}
+</p>
+
         </div>
 
-        {/* Right: heart + book now */}
         <div className="overlay-right">
           <button
-  className="wishlist-btn"
-  onClick={() => toggleFavourite(service.id)}
->
-  <Heart
-    fill={isFavourite ? "red" : "none"}
-    color={isFavourite ? "red" : "#ff671f"}
-    size={18}
-  />
-</button>
-
+            className="wishlist-btn"
+            onClick={() => toggleFavourite(service._id)}
+            aria-label="Toggle Favourite"
+          >
+            <Heart
+              fill={isFavourite ? "red" : "none"}
+              color={isFavourite ? "red" : "#ff671f"}
+              size={18}
+            />
+          </button>
 
           <button className="booking-btn">
             <CalendarCheck size={18} />
@@ -48,3 +47,4 @@ export default function FavouriteCard({ service }) {
     </div>
   );
 }
+
