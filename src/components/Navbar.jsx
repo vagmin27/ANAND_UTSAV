@@ -143,11 +143,22 @@ export default function AnandUtsavNavbar() {
                     <h2>My Account</h2>
                     <p className="user-email">{user?.email}</p>
                     <div className="profile-actions">
-                        <button className="profile-action-btn"><UserCircle /> View Profile</button>
-                        <button onClick={handleLogout} className="profile-action-btn logout-btn">
-                            <LogOut /> Logout
-                        </button>
-                    </div>
+    <button
+        className="profile-action-btn"
+        onClick={() => {
+            navigate('/my-account');
+            setIsProfileOpen(false);
+        }}
+    >
+        <UserCircle /> View Profile
+    </button>
+
+    <button onClick={handleLogout} className="profile-action-btn logout-btn">
+        <LogOut /> Logout
+    </button>
+</div>
+
+
                 </div>
             </GlassModal>
         </>

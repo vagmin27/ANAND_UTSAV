@@ -14,7 +14,8 @@ import Favourites from "./pages/Favourites";
 
 import ProviderDashboard from "./pages/ProviderDashboard";
 import AddService from "./pages/AddService";
-
+import MyReviewsPage from './pages/MyReviewsPage';
+import MyAccountPage from './pages/MyAccountPage';
 function App() {
   return (
     <>
@@ -32,9 +33,12 @@ function App() {
           {/* Routes with MainLayout / Navbar */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/my-account" element={<MyAccountPage />} />
+
             <Route path="/categories" element={<AllCategoriesPage />} />
             <Route path="/category/:id" element={<CategoryServicesPage />} />
             <Route path="/service/:id" element={<ServiceDetailsPage />} />
+            <Route path="/my-reviews" element={<MyReviewsPage />} />
             <Route path="/services" element={<AllServicesPage />} />
             <Route path="/favourites" element={<Favourites />} />
           </Route>

@@ -61,38 +61,59 @@ export default function FestiveAuth() {
   };
 
   const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setNotification({ message: "", type: "" });
-    const response = await sendOtpRequest(activeTab, formData);
-    if (response.success) {
-      showNotification(`✅ OTP sent to ${formData.email}`, "success");
-      (activeTab === "login" ? setLoginStep : setRegisterStep)("otp");
+  e.preventDefault();
+  setIsLoading(true);
+  setNotification({ message: "", type: "" });
+
+  const response = await sendOtpRequest(activeTab, formData);
+
+  if (response.success) {
+    showNotification(`✅ OTP sent to ${formData.email}`, "success");
+    (activeTab === "login" ? setLoginStep : setRegisterStep)("otp");
+  } else {
+    // 👇 Smart error handling
+    let msg = response.message?.toLowerCase() || "";
+    if (msg.includes("email") || msg.includes("user not found")) {
+      showNotification("❌ Invalid Email. Please try again.", "error");
     } else {
       showNotification(`❌ ${response.message || "Failed to send OTP."}`, "error");
     }
-    setIsLoading(false);
-  };
+  }
+
+  setIsLoading(false);
+};
 
   const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setNotification({ message: "", type: "" });
-    const response = await verifyOtpRequest(activeTab, formData);
-    if (response.success && response.token) {
-      if (activeTab === 'login') {
-        showNotification(`🎉 Welcome back!`, "success");
-        login({ email: formData.email }, response.token);
-        setTimeout(() => navigate('/'), 2000);
-      } else {
-        showNotification(`🎉 Registration successful! Please login.`, "success");
-        setTimeout(() => handleTabChange('login'), 2000);
-      }
+  e.preventDefault();
+  setIsLoading(true);
+  setNotification({ message: "", type: "" });
+
+  const response = await verifyOtpRequest(activeTab, formData);
+
+  if (response.success && response.token) {
+    if (activeTab === "login") {
+      showNotification(`🎉 Welcome back!`, "success");
+      login({ email: formData.email }, response.token);
+      setTimeout(() => navigate("/"), 2000);
     } else {
-      showNotification(`❌ ${response.message || "Invalid OTP."}`, "error");
+      showNotification(`🎉 Registration successful! Please login.`, "success");
+      setTimeout(() => handleTabChange("login"), 2000);
     }
-    setIsLoading(false);
-  };
+  } else {
+    // 👇 Smart error handling
+    let msg = response.message?.toLowerCase() || "";
+    if (msg.includes("otp")) {
+      showNotification("❌ Invalid OTP. Please try again.", "error");
+    } else if (msg.includes("email")) {
+      showNotification("❌ Invalid Email. Please try again.", "error");
+    } else {
+      showNotification(`❌ ${response.message || "Verification failed."}`, "error");
+    }
+  }
+
+  setIsLoading(false);
+};
+
 
   return (
     <div className="auth-page-wrapper">

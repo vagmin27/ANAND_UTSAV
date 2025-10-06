@@ -1,0 +1,42 @@
+.my-account-page {
+  padding: 20px;
+}
+
+.profile-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+}
+
+.profile-card label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.profile-card input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.profile-buttons {
+  margin-top: 20px;
+}
+
+.profile-buttons button {
+  margin-right: 10px;
+}
+.my-reviews-btn {
+    background: #f0c040;
+    color: black;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.my-reviews-btn:hover {
+    background: #d4a500;
+}
