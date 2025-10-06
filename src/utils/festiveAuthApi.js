@@ -29,15 +29,19 @@ async function apiRequest(endpoint, payload) {
             };
         }
 
-        // ✅ Always return server message, even if not ok (400, 401, etc.)
+        // ✅ Always return message, even if backend uses 'msg'
         if (!response.ok) {
             return {
                 success: false,
-                message: data.message || `Server error: ${response.status}`,
+                message: data.message || data.msg || `Server error: ${response.status}`,
             };
         }
 
-        return data; // success case
+        // ✅ Normalize message for success too
+        return {
+            ...data,
+            message: data.message || data.msg || "",
+        };
     } catch (error) {
         console.error(`API Request Error to ${endpoint}:`, error);
         return {
@@ -59,13 +63,13 @@ export function sendOtpRequest(tab, formData) {
     const payload = isLogin
         ? { email: formData.email }
         : {
-            email: formData.email,
-            username: formData.username,
-            fullName: formData.fullName,
-            phone: formData.phone,
-            location: formData.location,
-            gender: formData.gender,
-        };
+              email: formData.email,
+              username: formData.username,
+              fullName: formData.fullName,
+              phone: formData.phone,
+              location: formData.location,
+              gender: formData.gender,
+          };
 
     return apiRequest(endpoint, payload);
 }

@@ -248,3 +248,20 @@
         align-items: stretch;
     }
 }
+/* Base star look */
+.star {
+  font-size: 1.8rem;
+  color: #ccc; /* gray for unfilled */
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+/* Filled star when selected */
+.star.filled {
+  color: #f5b50a; /* gold/yellow when selected */
+}
+
+/* Optional hover effect */
+.star:hover {
+  color: #f1c40f;
+}

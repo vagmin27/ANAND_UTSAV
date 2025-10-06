@@ -10,30 +10,36 @@ export default function Favourites() {
   const { user, favourites, token } = useUser();
   const [favouriteServices, setFavouriteServices] = useState([]);
   const [viewMode, setViewMode] = useState("slide");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  if (favourites.length > 0 && token) {
-    const fetchFavouriteServices = async () => {
-      try {
-        const res = await axios.get(
-          "https://anand-u.vercel.app/provider/allservices",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+    if (favourites.length > 0 && token) {
+      const fetchFavouriteServices = async () => {
+        setLoading(true);
+        try {
+          const res = await axios.get(
+            "https://anand-u.vercel.app/provider/allservices",
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-        const allServices = res.data; // array of all services
-        const favServices = allServices.filter(s => favourites.includes(s._id));
+          const allServices = res.data; // array of all services
+          const favServices = allServices.filter((s) =>
+            favourites.includes(s._id)
+          );
 
-        setFavouriteServices(favServices);
-      } catch (err) {
-        console.error("Failed to fetch favourite services:", err);
-      }
-    };
-    fetchFavouriteServices();
-  } else {
-    setFavouriteServices([]);
-  }
-}, [favourites, token]);
-
+          setFavouriteServices(favServices);
+        } catch (err) {
+          console.error("Failed to fetch favourite services:", err);
+        } finally {
+          setLoading(false); // hide loader
+        }
+      };
+      fetchFavouriteServices();
+    } else {
+      setFavouriteServices([]);
+      setLoading(false);
+    }
+  }, [favourites, token]);
 
   if (!user) return <p>Please login to see your favourites.</p>;
 
@@ -59,7 +65,9 @@ export default function Favourites() {
         </div>
       </div>
 
-      {favouriteServices.length === 0 ? (
+      {loading ? (
+        <p>Loading favourite services...</p> // ✅ show while fetching
+      ) : favouriteServices.length === 0 ? (
         <p>You have no favourites yet.</p>
       ) : viewMode === "slide" ? (
         <FavouriteSlide services={favouriteServices} />
