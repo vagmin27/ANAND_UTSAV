@@ -14,213 +14,271 @@ export default function ChatPage() {
   const { user, token } = useUser();
   const { conversationId: conversationIdFromUrl } = useParams();
   const navigate = useNavigate();
-  
 
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [socket, setSocket] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState(null);
 
-
+  const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
   const selectedConversationRef = useRef(selectedConversation);
+  selectedConversationRef.current = selectedConversation;
 
+  // Axios instance
+  const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  // -----------------------
+  // 1️⃣ Socket Initialization
+  // -----------------------
   useEffect(() => {
-    selectedConversationRef.current = selectedConversation;
-  }, [selectedConversation]);
+    if (!user || !token) return;
 
-  // MODIFIED: This useEffect now contains detailed debugging logs.
-  useEffect(() => {
-    console.log("ChatPage mounted."); // 1. Check if the component mounts
+    const socket = io(SOCKET_URL);
+    socketRef.current = socket;
 
-    if (!token) {
-        console.error("NO TOKEN FOUND! User might not be logged in correctly."); // 2. Check for token
-        setLoading(false); // Stop loading if there's no token
-        return;
-    }
-    
-    console.log("User Token is present:", token); // 3. Confirm token exists
+    socket.emit('setup', user);
+    socket.on('connected', () => console.log('Socket connected ✅'));
 
-    // Setup Axios Authorization Header
-    const api = axios.create({
-      baseURL: API_BASE_URL,
-      headers: { Authorization: `Bearer ${token}` },
+    // Listen for incoming messages
+    socket.on('message received', (newMessage) => {
+      // Wrap message with conversation participants for frontend check
+      const messageWithParticipants = {
+        ...newMessage,
+        conversation: {
+          ...newMessage.conversation,
+          participants: [
+            newMessage.conversation.user,
+            newMessage.conversation.provider,
+          ],
+        },
+      };
+
+      const currentConvId = selectedConversationRef.current?._id;
+      if (currentConvId === messageWithParticipants.conversation._id) {
+        setMessages((prev) => [...prev, messageWithParticipants]);
+      } else {
+        // Update conversations list for unread count
+        setConversations((prev) =>
+          prev.map((convo) =>
+            convo._id === messageWithParticipants.conversation._id
+              ? {
+                  ...convo,
+                  latestMessage: messageWithParticipants,
+                  unreadCount: (convo.unreadCount || 0) + 1,
+                }
+              : convo
+          )
+        );
+      }
     });
 
-    // Fetch all user conversations
-    const getConversations = async () => {
+    // Typing events
+    socket.on('typing', () => setIsTyping(true));
+    socket.on('stop typing', () => setIsTyping(false));
+
+    return () => {
+      socket.disconnect();
+      socket.off();
+    };
+  }, [user, token]);
+
+  // -----------------------
+  // 2️⃣ Fetch Conversations
+  // -----------------------
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchConversations = async () => {
       try {
-        setLoading(true);
-        console.log("Attempting to fetch conversations..."); // 4. Check if fetch function is called
         const { data } = await api.get('/convo/');
-        console.log("Successfully received conversations:", data); // 5. Check the response data
         setConversations(data || []);
       } catch (error) {
-        console.error("FAILED to fetch conversations:", error.response?.data || error.message); // 6. IMPORTANT: Check for errors
-      } finally {
-        setLoading(false);
+        console.error('Failed to fetch conversations:', error);
       }
     };
-    getConversations();
 
-    // Connect to Socket.IO
-    const newSocket = io(SOCKET_URL);
-    setSocket(newSocket);
-    newSocket.emit('setup', user);
+    fetchConversations();
+  }, [token]);
 
-    // Cleanup on component unmount
-    return () => {
-        console.log("ChatPage unmounted, disconnecting socket.");
-        newSocket.disconnect();
-    }
-  }, [token, user]); // This dependency array is important
-
-  // Select Conversation based on URL parameter
+  // -----------------------
+  // 3️⃣ Select Conversation from URL
+  // -----------------------
   useEffect(() => {
     if (conversationIdFromUrl && conversations.length > 0) {
-      const conversationToSelect = conversations.find(c => c._id === conversationIdFromUrl);
-      if (conversationToSelect) {
-        setSelectedConversation(conversationToSelect);
-      }
+      const convo = conversations.find((c) => c._id === conversationIdFromUrl);
+      if (convo) setSelectedConversation(convo);
     }
   }, [conversationIdFromUrl, conversations]);
 
-  // Fetch Messages & Mark as Read when a conversation is selected
+  // -----------------------
+  // 4️⃣ Fetch Messages & Join Room
+  // -----------------------
   useEffect(() => {
     if (!selectedConversation || !token) return;
 
-    const api = axios.create({ baseURL: API_BASE_URL, headers: { Authorization: `Bearer ${token}` } });
-    
     const fetchMessages = async () => {
       try {
         const { data } = await api.get(`/message/${selectedConversation._id}`);
-        setMessages(data || []);
-        socket.emit('join conversation', selectedConversation._id);
+        setMessages((data || []).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
+        socketRef.current.emit('join conversation', selectedConversation._id);
       } catch (error) {
-        console.error("Failed to fetch messages", error);
+        console.error('Failed to fetch messages', error);
       }
     };
 
     const markAsRead = async () => {
+      if (selectedConversation.unreadCount > 0) {
         try {
-            await api.put(`/convo/read/${selectedConversation._id}`);
-            setConversations(prev => prev.map(c => 
-                c._id === selectedConversation._id ? {...c, unreadCount: 0} : c
-            ));
+          await api.put(`/convo/read/${selectedConversation._id}`);
+          setConversations((prev) =>
+            prev.map((c) =>
+              c._id === selectedConversation._id ? { ...c, unreadCount: 0 } : c
+            )
+          );
         } catch (error) {
-            console.error("Failed to mark as read", error);
+          console.error('Failed to mark as read', error);
         }
-    }
-
-    fetchMessages();
-    if (selectedConversation.unreadCount > 0) {
-      markAsRead();
-    }
-  }, [selectedConversation, token, socket]);
-
-  // Listen for incoming messages
-  useEffect(() => {
-    if (!socket) return;
-
-    const messageListener = (newMessage) => {
-      if (selectedConversationRef.current?._id === newMessage.conversation._id) {
-        setMessages(prev => [...prev, newMessage]);
-      } else {
-        setConversations(prev => prev.map(convo => 
-            convo._id === newMessage.conversation._id 
-            ? { ...convo, latestMessage: newMessage, unreadCount: (convo.unreadCount || 0) + 1 }
-            : convo
-        ));
       }
     };
 
-    socket.on('message received', messageListener);
-    return () => socket.off('message received', messageListener);
-  }, [socket]);
+    fetchMessages();
+    markAsRead();
+  }, [selectedConversation, token]);
 
-  // Scroll to bottom of messages
+  // -----------------------
+  // 5️⃣ Auto-scroll messages
+  // -----------------------
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // -----------------------
+  // 6️⃣ Send Message
+  // -----------------------
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedConversation) return;
 
-    const api = axios.create({ baseURL: API_BASE_URL, headers: { Authorization: `Bearer ${token}` } });
-
     try {
-        const payload = { content: newMessage, conversationId: selectedConversation._id };
-        const { data: sentMessage } = await api.post('/message/', payload);
-        
-        socket.emit('new message', sentMessage);
-        setMessages(prev => [...prev, sentMessage]);
-        setNewMessage('');
+      const payload = { content: newMessage, conversationId: selectedConversation._id };
+      const { data: sentMessage } = await api.post('/message/', payload);
+
+      // Wrap message with participants for frontend
+      const messageWithParticipants = {
+        ...sentMessage,
+        conversation: {
+          _id: selectedConversation._id,
+          participants: [selectedConversation.user, selectedConversation.provider],
+        },
+      };
+
+      socketRef.current.emit('new message', messageWithParticipants);
+      setMessages((prev) => [...prev, sentMessage]);
+      setNewMessage('');
+      socketRef.current.emit('stop typing', selectedConversation._id);
     } catch (error) {
-        console.error("Failed to send message", error);
+      console.error('Failed to send message:', error);
     }
   };
 
+  // -----------------------
+  // 7️⃣ Typing Handler
+  // -----------------------
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!socketRef.current || !selectedConversation) return;
+
+    socketRef.current.emit('typing', selectedConversation._id);
+
+    if (typingTimeout) clearTimeout(typingTimeout);
+
+    const timeout = setTimeout(() => {
+      socketRef.current.emit('stop typing', selectedConversation._id);
+    }, 3000);
+
+    setTypingTimeout(timeout);
+  };
+
+  // -----------------------
+  // 8️⃣ Helpers
+  // -----------------------
   const getOtherParticipant = (convo) => {
-    if (!convo || !user) return { name: "Unknown" };
+    if (!convo || !user) return { name: 'Unknown' };
     return convo.provider?._id === user._id ? convo.user : convo.provider;
   };
-  
-  if (loading) {
-    return <div className="chat-page-loading">Loading chats...</div>;
-  }
 
+  // -----------------------
+  // 9️⃣ Render
+  // -----------------------
   return (
     <div className="chat-page-container">
+      {/* Left Panel */}
       <div className="conversation-list-panel">
-        <div className="list-header">
-            <h3>Conversations</h3>
-        </div>
+        <div className="list-header"><h3>Conversations</h3></div>
         <div className="conversations">
-          {conversations.length > 0 ? conversations.map(convo => {
-            const otherUser = getOtherParticipant(convo);
-            return (
-              <div 
-                key={convo._id} 
-                className={`conversation-item ${selectedConversation?._id === convo._id ? 'active' : ''}`}
-                onClick={() => navigate(`/chat/${convo._id}`)}
-              >
-                <div className="convo-details">
-                  <p className="convo-name">{otherUser?.fullName || otherUser?.name}</p>
-                  <p className="convo-preview">
-                    {convo.latestMessage ? convo.latestMessage.content.substring(0, 25) + '...' : 'No messages yet'}
-                  </p>
+          {conversations.length > 0 ? (
+            conversations.map((convo) => {
+              const otherUser = getOtherParticipant(convo);
+              return (
+                <div
+                  key={convo._id}
+                  className={`conversation-item ${selectedConversation?._id === convo._id ? 'active' : ''}`}
+                  onClick={() => navigate(`/chat/${convo._id}`)}
+                >
+                  <div className="convo-details">
+                    <p className="convo-name">{otherUser?.fullName || otherUser?.name}</p>
+                    <p className="convo-preview">
+                      {convo.latestMessage ? convo.latestMessage.content.substring(0, 25) + '...' : 'No messages yet'}
+                    </p>
+                  </div>
+                  {convo.unreadCount > 0 && <span className="unread-badge">{convo.unreadCount}</span>}
                 </div>
-                {convo.unreadCount > 0 && <span className="unread-badge">{convo.unreadCount}</span>}
-              </div>
-            )
-          }) : <p className="no-convos">No conversations found.</p>}
+              );
+            })
+          ) : <p className="no-convos">No conversations found.</p>}
         </div>
       </div>
 
+      {/* Right Panel */}
       <div className="chat-box-panel">
         {selectedConversation ? (
           <>
             <div className="chat-header">
               <h3>{getOtherParticipant(selectedConversation)?.fullName || getOtherParticipant(selectedConversation)?.name}</h3>
             </div>
+
             <div className="messages-area">
-              {messages.map(msg => (
-                <div key={msg._id} className={`message-bubble ${msg.sender?._id === user?._id ? 'sent' : 'received'}`}>
+              {messages.map((msg) => (
+                <div key={msg._id} className={`message-bubble ${msg.sender?._id === user?._id || msg.sender === user?._id ? 'sent' : 'received'}`}>
                   <p>{msg.content}</p>
                   <span className="timestamp">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               ))}
+
+              {isTyping && <div className="typing-indicator">Typing...</div>}
+
               <div ref={messagesEndRef} />
             </div>
+
             <form className="message-input-form" onSubmit={handleSendMessage}>
-              <input
-                type="text"
+              <textarea
                 placeholder="Type your message..."
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
+                onChange={handleTyping}
+                rows="2"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage(e);
+                  }
+                }}
               />
               <button type="submit"><Send size={20} /></button>
             </form>
