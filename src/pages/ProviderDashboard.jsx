@@ -5,15 +5,10 @@ import {
   providerFetchServices,
   providerDeleteService,
 } from "../utils/providerAuthApi";
-
+import { useProvider } from '../context/ProviderContext'; // ✅ CHANGED: Import the useProvider hook
 import { Plus, LayoutDashboard, Calendar, MessageSquare, Settings, LogOut, ChevronUp } from 'lucide-react';
-
-// Using your custom ServiceCard component via import
 import ServiceProviderCard from "../components/ServiceProviderCard";
-
-// NEW: Import the ChatPage component. Adjust the path if it's located elsewhere.
-import ChatPage from './ChatPage';
-
+import ProviderChatPage from "./ProviderChatPage";
 
 export default function ProviderDashboard() {
   // --- State and Logic ---
@@ -21,15 +16,15 @@ export default function ProviderDashboard() {
   const [fetching, setFetching] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
+  const [activeView, setActiveView] = useState('dashboard');
+
   const profileRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // NEW: State to manage which view is active in the main content area.
-  // 'dashboard' is the default view.
-  const [activeView, setActiveView] = useState('dashboard');
+  const { provider, logout } = useProvider();
 
-  // This function now handles the REAL API call
+
   const fetchServices = async () => {
     setFetching(true);
     try {
@@ -69,13 +64,13 @@ export default function ProviderDashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✨ Restored Full Logout Functionality
   const handleLogout = async () => {
-    if (loading) return; // Prevent multiple clicks
+    if (loading) return;
     setLoading(true);
     try {
       const res = await providerLogoutRequest();
       if (res.success) {
+        logout(); // This clears localStorage and React state
         alert("✅ Logged out successfully");
         navigate("/provider-login");
       } else {
@@ -286,18 +281,19 @@ export default function ProviderDashboard() {
               {/* MODIFIED: Sidebar links now use onClick handlers to switch views */}
               <li className="nav-item">
                 <a onClick={() => setActiveView('dashboard')} className={activeView === 'dashboard' ? 'active' : ''}>
-                    <LayoutDashboard size={20} /> Dashboard
+                  <LayoutDashboard size={20} /> Dashboard
                 </a>
               </li>
               <li className="nav-item"><a href="#" onClick={handleDummyLink}><Calendar size={20} /> Bookings</a></li>
               <li className="nav-item">
                 <a onClick={() => setActiveView('messages')} className={activeView === 'messages' ? 'active' : ''}>
-                    <MessageSquare size={20} /> Messages
+                  <MessageSquare size={20} /> Messages
                 </a>
               </li>
               <li className="nav-item"><a href="#" onClick={handleDummyLink}><Settings size={20} /> Settings</a></li>
             </ul>
           </nav>
+
           <div className="sidebar-profile" ref={profileRef}>
             <div className={`profile-menu ${isProfileOpen ? 'open' : ''}`}>
               <a className="profile-menu-item" href="#" onClick={handleDummyLink}><Settings size={18} /> View Profile</a>
@@ -306,10 +302,15 @@ export default function ProviderDashboard() {
               </div>
             </div>
             <div className={`profile-card ${isProfileOpen ? 'open' : ''}`} onClick={() => setProfileOpen(!isProfileOpen)}>
-              <div className="profile-avatar">S</div>
+              <div className="profile-avatar">
+                {/* Display first letter of provider's name, or 'P' as fallback */}
+                {provider?.name?.charAt(0).toUpperCase() || 'P'}
+              </div>
               <div className="profile-info">
-                <div className="name">Service Provider</div>
-                <div className="email">Provider Account</div>
+                {/* Display provider's name from context, with fallback text */}
+                <div className="name">{provider?.name || 'Service Provider'}</div>
+                {/* Display provider's email from context, with fallback text */}
+                <div className="email">{provider?.email || 'Provider Account'}</div>
               </div>
               <ChevronUp size={20} className="chevron" />
             </div>
@@ -321,7 +322,7 @@ export default function ProviderDashboard() {
             // We conditionally render the correct component based on the 'activeView' state.
           */}
           {activeView === 'dashboard' && <ServicesView />}
-          {activeView === 'messages' && <ChatPage />}
+          {activeView === 'messages' && <ProviderChatPage />}
         </main>
       </div>
     </>

@@ -1,80 +1,87 @@
-import React, { useState, useEffect } from "react";
-import { LayoutGrid, LayoutList } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
-import FavouriteSlide from "../components/FavouriteSlide";
-import FavouriteCard from "../components/FavouriteCard";
+import ServiceCard from "../components/ServiceCard";
 import "../css/Favourites.css";
 import axios from "axios";
 
+// ✨ Skeleton loader (matches ServiceCard layout)
+const ServiceCardSkeleton = () => (
+  <div className="service-card-skeleton">
+    <div className="skeleton-image"></div>
+    <div className="skeleton-content">
+      <div className="skeleton-line small"></div>
+      <div className="skeleton-line title"></div>
+      <div className="skeleton-line price"></div>
+    </div>
+  </div>
+);
+
 export default function Favourites() {
-  const { user, favourites, token } = useUser();
+  const { user, favourites, token, loading } = useUser(); // ✅ using global loading
   const [favouriteServices, setFavouriteServices] = useState([]);
-  const [viewMode, setViewMode] = useState("slide");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (favourites.length > 0 && token) {
-      const fetchFavouriteServices = async () => {
-        setLoading(true);
-        try {
-          const res = await axios.get(
-            "https://anand-u.vercel.app/provider/allservices",
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
+    const fetchFavouriteServices = async () => {
+      if (!token || favourites.length === 0) {
+        setFavouriteServices([]);
+        return;
+      }
 
-          const allServices = res.data; // array of all services
-          const favServices = allServices.filter((s) =>
-            favourites.includes(s._id)
-          );
+      try {
+        const res = await axios.get(
+          "https://anand-u.vercel.app/provider/allservices",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const allServices = res.data;
+        const favServices = allServices.filter((s) =>
+          favourites.includes(s._id)
+        );
+        setFavouriteServices(favServices);
+      } catch (err) {
+        console.error("Failed to fetch favourite services:", err);
+      }
+    };
 
-          setFavouriteServices(favServices);
-        } catch (err) {
-          console.error("Failed to fetch favourite services:", err);
-        } finally {
-          setLoading(false); // hide loader
-        }
-      };
-      fetchFavouriteServices();
-    } else {
-      setFavouriteServices([]);
-      setLoading(false);
-    }
+    fetchFavouriteServices();
   }, [favourites, token]);
 
-  if (!user) return <p>Please login to see your favourites.</p>;
+  if (loading) {
+    return (
+      <div className="favourites-page">
+        <div className="favourites-header">
+          <h2>My Favourites</h2>
+        </div>
+        <div className="service-grid">
+          {[...Array(favourites.length || 4)].map((_, i) => (
+            <ServiceCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <p className="favourites-message">
+        Please log in to see your favourites.
+      </p>
+    );
+  }
 
   return (
     <div className="favourites-page">
       <div className="favourites-header">
         <h2>My Favourites</h2>
-        <div className="view-toggle">
-          <button
-            className={viewMode === "slide" ? "active" : ""}
-            onClick={() => setViewMode("slide")}
-            aria-label="Slide View"
-          >
-            <LayoutGrid size={24} />
-          </button>
-          <button
-            className={viewMode === "card" ? "active" : ""}
-            onClick={() => setViewMode("card")}
-            aria-label="Card View"
-          >
-            <LayoutList size={24} />
-          </button>
-        </div>
       </div>
 
-      {loading ? (
-        <p>Loading favourite services...</p> // ✅ show while fetching
-      ) : favouriteServices.length === 0 ? (
-        <p>You have no favourites yet.</p>
-      ) : viewMode === "slide" ? (
-        <FavouriteSlide services={favouriteServices} />
+      {favouriteServices.length === 0 ? (
+        <p className="favourites-message">You have no favourites yet.</p>
       ) : (
-        <div className="favourite-cards-grid">
+        <div className="service-grid">
           {favouriteServices.map((service) => (
-            <FavouriteCard key={service._id} service={service} />
+            <ServiceCard key={service._id} service={service} />
           ))}
         </div>
       )}

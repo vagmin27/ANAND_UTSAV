@@ -1,12 +1,40 @@
 // src/pages/MyAccountPage.jsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "../css/MyAccountPage.css";
 
+const ProfileSkeleton = () => (
+  <div className="my-account-page">
+    <div className="skeleton-line title-skeleton"></div>
+    <div className="profile-card skeleton-card">
+      <div className="skeleton-field">
+        <div className="skeleton-line label-skeleton"></div>
+        <div className="skeleton-line input-skeleton"></div>
+      </div>
+      <div className="skeleton-field">
+        <div className="skeleton-line label-skeleton"></div>
+        <div className="skeleton-line input-skeleton"></div>
+      </div>
+      <div className="skeleton-field">
+        <div className="skeleton-line label-skeleton"></div>
+        <div className="skeleton-line input-skeleton"></div>
+      </div>
+      <div className="skeleton-field">
+        <div className="skeleton-line label-skeleton"></div>
+        <div className="skeleton-line input-skeleton"></div>
+      </div>
+      <div className="profile-buttons skeleton-buttons">
+        <div className="skeleton-line button-skeleton"></div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function MyAccountPage() {
-  const { token, logout } = useUser();
+  const { token } = useUser();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -35,27 +63,22 @@ export default function MyAccountPage() {
       } catch (err) {
         console.error("Failed to fetch user details:", err);
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
       }
     };
-
     if (token) fetchUserDetails();
+    else setLoading(false);
   }, [token]);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value, }));
   };
 
   const handleSave = async () => {
     try {
-      const res = await axios.put(
-        "https://anand-u.vercel.app/user/updateUser",
-        formData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.put("https://anand-u.vercel.app/user/updateUser", formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setUserDetails(res.data);
       setEditing(false);
       alert("Profile updated successfully!");
@@ -65,76 +88,56 @@ export default function MyAccountPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?")) return;
-    try {
-      const res = await axios.delete("https://anand-u.vercel.app/user/deleteAccount", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.data.success) {
-        alert("Account deleted successfully");
-        logout();
-        navigate("/");
-      }
-    } catch (err) {
-      console.error("Error deleting account:", err);
-      alert("Failed to delete account");
-    }
-  };
 
-  if (loading) return <p>Loading profile...</p>;
+  if (loading) return <ProfileSkeleton />;
 
-  if (!userDetails)
-    return <p>User details not found.</p>;
+  if (!userDetails) return <p>Please log in to view your profile.</p>;
 
   return (
     <div className="my-account-page">
       <h2>My Profile</h2>
       <div className="profile-card">
-        <label>
-          Full Name:
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </label>
+        {/* Full Name Field */}
+        <div className="form-field">
+          <label htmlFor="fullName">Full Name</label>
+          {editing ? (
+            <input id="fullName" type="text" name="fullName" value={formData.fullName} onChange={handleChange} />
+          ) : (
+            <p className="field-value">{userDetails.fullName || "-"}</p>
+          )}
+        </div>
 
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </label>
+        {/* Username Field */}
+        <div className="form-field">
+          <label htmlFor="username">Username</label>
+          {editing ? (
+            <input id="username" type="text" name="username" value={formData.username} onChange={handleChange} />
+          ) : (
+            <p className="field-value">{userDetails.username || "-"}</p>
+          )}
+        </div>
 
-        <label>
-          Phone:
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </label>
+        {/* Phone Field */}
+        <div className="form-field">
+          <label htmlFor="phone">Phone</label>
+          {editing ? (
+            <input id="phone" type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          ) : (
+            <p className="field-value">{userDetails.phone || "-"}</p>
+          )}
+        </div>
 
-        <label>
-          Location:
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </label>
+        {/* Location Field */}
+        <div className="form-field">
+          <label htmlFor="location">Location</label>
+          {editing ? (
+            <input id="location" type="text" name="location" value={formData.location} onChange={handleChange} />
+          ) : (
+            <p className="field-value">{userDetails.location || "-"}</p>
+          )}
+        </div>
 
+        {/* Buttons */}
         <div className="profile-buttons">
           {editing ? (
             <>
@@ -144,13 +147,6 @@ export default function MyAccountPage() {
           ) : (
             <button onClick={() => setEditing(true)} className="edit-btn">Edit Profile</button>
           )}
-          <button onClick={handleDelete} className="delete-btn">Delete Account</button>
-          <button
-        onClick={() => navigate('/my-reviews')}
-        className="my-reviews-btn"
-    >
-        ⭐ My Reviews
-    </button>
         </div>
       </div>
     </div>
